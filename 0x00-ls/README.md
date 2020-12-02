@@ -19,13 +19,15 @@ Change into the `0x00-ls` directory
 $ cd 0x00-ls
 ```
 
-Execute any of the files in this folder, like so:
+Execute the hls file:
 ```
 $ ./hls
 ```
 
-Move any of these files to a folder within your PATH to include as a command in your terminal
+Move the hls file to a folder within your PATH to use as terminal command
 ```
 $ cp hls /usr/bin
 $ hls
 ```
+
+All other files are the program's source code, which you are free to verify or alter.
