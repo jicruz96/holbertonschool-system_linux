@@ -118,6 +118,7 @@ char *get_program_name(char *program_path);
 int _strlen(char *str);
 char *get_group(gid_t group_id);
 char *get_user(uid_t user_id);
+void free_everything(dir_node_t *head);
 
 char get_type(mode_t mode);
 void get_permissions(char *buffer, mode_t mode);
