@@ -66,29 +66,26 @@ int get_config(int arg_count, char **args, ls_config_t *config)
 /**
  * print_error_message - does what it says, doc
  * @dir_node: a directory struct
- * @program_path: program path, used to extract program name
  * Return: errno
  **/
-int print_error_message(dir_node_t *dir_node, char *program_path)
+int print_error_message(dir_node_t *dir_node)
 {
 	char buffer[256];
 	char *error_message;
 	int error_code = dir_node->error_code;
-	char *program_name = get_program_name(program_path);
 
 	if (error_code == 2)
 	{
-		error_message = "%s: cannot access %s";
+		error_message = "hls: cannot access %s";
 		errno = error_code;
 	}
 	else if (error_code == 13)
 	{
-		error_message = "%s: cannot open directory %s";
+		error_message = "hls: cannot open directory %s";
 		errno = error_code;
 	}
-	sprintf(buffer, error_message, program_name, dir_node->dir_name);
+	sprintf(buffer, error_message, dir_node->dir_name);
 	perror(buffer);
-	free(program_name);
 	return (error_code);
 }
 

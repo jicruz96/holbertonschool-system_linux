@@ -25,7 +25,7 @@ int main(int argc, char **argv)
 	if (dirs_list->next == NULL)
 	{
 		if (dirs_list->error_code)
-			print_error_message(dirs_list, argv[0]);
+			print_error_message(dirs_list);
 		else
 			print_list(dirs_list->list, config);
 	}
@@ -35,7 +35,7 @@ int main(int argc, char **argv)
 		{
 			if (tmp->error_code)
 			{
-				print_error_message(tmp, argv[0]);
+				print_error_message(tmp);
 			}
 			else
 			{

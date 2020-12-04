@@ -107,7 +107,7 @@ typedef struct dir_node_s
 
 /* Function Prototypes */
 int generate_list(ls_config_t settings, char *dir_name);
-int print_error_message(dir_node_t *dir_node, char *program_name);
+int print_error_message(dir_node_t *dir_node);
 void print_file_info(char *filename, ls_config_t settings);
 int get_config(int arg_count, char **args, ls_config_t *config);
 file_node_t *read_dir(char *dir_name, DIR *dir_stream, ls_config_t *config);
