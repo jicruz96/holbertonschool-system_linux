@@ -120,7 +120,7 @@ file_node_t *read_dir(char *dir_name, DIR *dir_stream, ls_config_t *config)
 	for (; (reader = readdir(dir_stream)) != NULL; prev = new)
 	{
 		new = malloc(sizeof(file_node_t));
-		new->file_name = reader->d_name;
+		new->file_name = _strdup(reader->d_name);
 		new->next = NULL;
 		new->prev = NULL;
 		if (config->long_format)
