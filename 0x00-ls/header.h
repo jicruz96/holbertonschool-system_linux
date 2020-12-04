@@ -32,44 +32,77 @@
 /* For malloc, free */
 #include <stdlib.h>
 
-/* Settings for list function */
+/**
+ * struct ls_settings_s - config struct
+ * @program_name: program name
+ * @long_format: long format
+ * @one_per_line: -1
+ * @show_hiddens: -a
+ * @show_hiddens_alt: -A ('.' and '..' ommitted)
+ * @reversed: -r
+ * @sort_by_size: -S
+ * @sort_by_time: -t
+ * @recursive: -R
+ * @max_hard_links: max hard links
+ * @max_size: max size
+ * @max_strlen: max strlen
+ **/
 typedef struct ls_settings_s
 {
-    char *program_name;
-    bool long_format;
-    bool one_per_line;
-    bool show_hiddens;
-    bool show_hiddens_alt;
-    bool reversed;
-    bool sort_by_size;
-    bool sort_by_time;
-    bool recursive;
-    int max_hard_links;
-    int max_size;
-    int max_strlen;
+	char *program_name;
+	bool long_format;
+	bool one_per_line;
+	bool show_hiddens;
+	bool show_hiddens_alt;
+	bool reversed;
+	bool sort_by_size;
+	bool sort_by_time;
+	bool recursive;
+	int max_hard_links;
+	int max_size;
+	int max_strlen;
 } ls_config_t;
 
-/* Node with values for one file */
+/**
+ * struct file_link_s - file linked list node
+ * @mode: mode
+ * @num_links: num links
+ * @user: user
+ * @group: group
+ * @size: size
+ * @mod_date: string of date of last modification of file
+ * @file_name: file name
+ * @next: next
+ * @prev: prev
+ **/
 typedef struct file_link_s
 {
-    mode_t mode;
-    nlink_t num_links;
-    char *user;
-    char *group;
-    off_t size;
-    char *mod_date;
-    char *file_name;
-    struct file_link_s *next;
-    struct file_link_s *prev;
+	mode_t mode;
+	nlink_t num_links;
+	char *user;
+	char *group;
+	off_t size;
+	char *mod_date;
+	char *file_name;
+	struct file_link_s *next;
+	struct file_link_s *prev;
 } file_node_t;
 
+/**
+ * struct dir_node_s - directory node
+ * @dir_name: dir name
+ * @list: list
+ * @error_code: error_code
+ * @next: next
+ * @prev: prev
+ **/
 typedef struct dir_node_s
 {
-    char *dir_name;
-    file_node_t *list;
-    int error_code;
-    struct dir_node_s *next;
-    struct dir_node_s *prev;
+	char *dir_name;
+	file_node_t *list;
+	int error_code;
+	struct dir_node_s *next;
+	struct dir_node_s *prev;
 } dir_node_t;
 
 /* Function Prototypes */
@@ -88,6 +121,11 @@ char *get_user(uid_t user_id);
 
 char get_type(mode_t mode);
 void get_permissions(char *buffer, mode_t mode);
+void print_list_long(file_node_t *file_list, ls_config_t config);
+void get_long_stats(file_node_t *new, struct stat file_info);
 
-#define DEFAULT_LS NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+#define DEFAULT_LS                            \
+	{                                         \
+		NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 \
+	}
 #endif /* HLS_HEADER */
