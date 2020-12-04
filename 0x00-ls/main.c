@@ -20,6 +20,7 @@ int main(int argc, char **argv)
 
 	/* make_lists stores the final list of lists in dirs_list */
 	error_check = make_lists(&config, argv, argc, i, &dirs_list);
+
 	/* If there is only one directory, print its list of contents */
 	if (dirs_list->next == NULL)
 	{
@@ -41,7 +42,6 @@ int main(int argc, char **argv)
 				printf("%s:\n", tmp->dir_name);
 				print_list(tmp->list, config);
 			}
-
 			if (tmp->next != NULL)
 				putchar('\n');
 		}
@@ -67,6 +67,7 @@ void free_everything(dir_node_t *head)
 		{
 			f_prev = f;
 			f = f->next;
+			free(f_prev->file_name);
 			free(f_prev);
 		}
 		prev = head;
