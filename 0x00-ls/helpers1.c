@@ -83,6 +83,7 @@ int ls(char *dir_name, ls_config_t *config, dir_node_t **head)
 		new->error_code = errno;
 	else
 		new->list = read_dir(dir_name, dir_stream, config);
+	closedir(dir_stream);
 
 	if (*head == NULL)
 	{
