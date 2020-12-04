@@ -119,14 +119,11 @@ int _strlen(char *str);
 char *get_group(gid_t group_id);
 char *get_user(uid_t user_id);
 void free_everything(dir_node_t *head);
+char *_strdup(char *str);
 
 char get_type(mode_t mode);
 void get_permissions(char *buffer, mode_t mode);
 void print_list_long(file_node_t *file_list, ls_config_t config);
 void get_long_stats(file_node_t *new, struct stat file_info);
 
-#define DEFAULT_LS                            \
-	{                                         \
-		NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 \
-	}
 #endif /* HLS_HEADER */
