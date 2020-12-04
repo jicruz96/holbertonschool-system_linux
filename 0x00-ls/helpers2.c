@@ -35,6 +35,8 @@ int get_config(int arg_count, char **args, ls_config_t *config)
 {
 	int i, j;
 
+	/* Fix for options at the end rather than at the beginning */
+
 	for (i = 1; i < arg_count && args[i][0] == '-'; i++)
 	{
 		for (j = 1; args[i][j] != '\0'; j++)
@@ -108,7 +110,7 @@ char *get_program_name(char *program_path)
 
 	len = i - last_slash;
 	program_path = program_path + last_slash + 1;
-	program_name = malloc(sizeof(char) * len);
+	program_name = malloc(sizeof(char) * len + 2);
 	for (i = 0; i < len; i++)
 		program_name[i] = program_path[i];
 	program_name[i] = '\0';
