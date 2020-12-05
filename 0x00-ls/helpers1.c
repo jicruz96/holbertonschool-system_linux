@@ -39,7 +39,6 @@ void print_list(file_node_t *file_list, ls_config_t config)
  * @config: ls config
  * @av: argument vector
  * @ac: argument count
- * @i: index where arguments start in argument vector
  * @h: head of linked list of directories to be listed
  * Return: status
  **/

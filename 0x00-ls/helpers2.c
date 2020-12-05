@@ -56,8 +56,6 @@ void get_config(int arg_count, char **args, ls_config_t *config)
 					config->sort_by_time = true;
 				else if (args[i][j] == 'S')
 					config->sort_by_size = true;
-
-	return;
 }
 
 /**
