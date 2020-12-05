@@ -43,19 +43,22 @@ void print_list(file_node_t *file_list, ls_config_t config)
  * @h: head of linked list of directories to be listed
  * Return: status
  **/
-int make_lists(ls_config_t *config, char **av, int ac, int i, dir_node_t **h)
+int make_lists(ls_config_t *config, char **av, int ac, dir_node_t **h)
 {
-	int error_check, status = 0;
+	int error_check = 0, status = 0, i = 0;
 
-	if (i == ac)
-		return (ls(".", config, h));
-
-	for (; i < ac; i++)
+	for (i = 1; i < ac; i++)
 	{
-		error_check = ls(av[i], config, h);
-		if (error_check)
-			status = error_check;
+		if (av[i][0] != '-')
+		{
+			error_check = ls(av[i], config, h);
+			if (error_check)
+				status = error_check, error_check = 0;
+		}
 	}
+
+	if (*h == NULL)
+		return (ls(".", config, h));
 
 	return (status);
 }

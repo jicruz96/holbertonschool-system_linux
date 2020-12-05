@@ -8,7 +8,7 @@
  **/
 int main(int argc, char **argv)
 {
-	int i, error_check = 0;
+	int error_check = 0;
 	ls_config_t config = {NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 	dir_node_t *dirs_list = NULL, *tmp;
 
@@ -16,10 +16,10 @@ int main(int argc, char **argv)
 	config.program_name = argv[0];
 
 	/* Parse through arguments to get configuration. */
-	i = get_config(argc, argv, &config);
+	get_config(argc, argv, &config);
 
 	/* make_lists stores the final list of lists in dirs_list */
-	error_check = make_lists(&config, argv, argc, i, &dirs_list);
+	error_check = make_lists(&config, argv, argc, &dirs_list);
 
 	/* If there is only one directory, print its list of contents */
 	if (dirs_list->next == NULL)

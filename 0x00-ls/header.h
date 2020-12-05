@@ -109,10 +109,10 @@ typedef struct dir_node_s
 int generate_list(ls_config_t settings, char *dir_name);
 int print_error_message(dir_node_t *dir_node);
 void print_file_info(char *filename, ls_config_t settings);
-int get_config(int arg_count, char **args, ls_config_t *config);
+void get_config(int arg_count, char **args, ls_config_t *config);
 file_node_t *read_dir(char *dir_name, DIR *dir_stream, ls_config_t *config);
 int ls(char *dir_name, ls_config_t *config, dir_node_t **head);
-int make_lists(ls_config_t *, char **, int, int, dir_node_t **);
+int make_lists(ls_config_t *config, char **av, int ac, dir_node_t **head);
 void print_list(file_node_t *file_list, ls_config_t config);
 char *get_program_name(char *program_path);
 int _strlen(char *str);

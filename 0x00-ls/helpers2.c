@@ -31,36 +31,33 @@ char *get_group(gid_t group_id)
  * @config: pointer to config struct
  * Return: index of args where we left off
  **/
-int get_config(int arg_count, char **args, ls_config_t *config)
+void get_config(int arg_count, char **args, ls_config_t *config)
 {
 	int i, j;
 
 	/* Fix for options at the end rather than at the beginning */
 
-	for (i = 1; i < arg_count && args[i][0] == '-'; i++)
-	{
-		for (j = 1; args[i][j] != '\0'; j++)
-		{
-			if (args[i][j] == '1')
-				config->one_per_line = true;
-			else if (args[i][j] == 'a')
-				config->show_hiddens = true;
-			else if (args[i][j] == 'A')
-				config->show_hiddens_alt = true;
-			else if (args[i][j] == 'l')
-				config->long_format = true;
-			else if (args[i][j] == 'r')
-				config->reversed = true;
-			else if (args[i][j] == 'R')
-				config->recursive = true;
-			else if (args[i][j] == 't')
-				config->sort_by_time = true;
-			else if (args[i][j] == 'S')
-				config->sort_by_size = true;
-		}
-	}
+	for (i = 1; i < arg_count; i++)
+		if (args[i][0] == '-')
+			for (j = 1; args[i][j] != '\0'; j++)
+				if (args[i][j] == '1')
+					config->one_per_line = true;
+				else if (args[i][j] == 'a')
+					config->show_hiddens = true;
+				else if (args[i][j] == 'A')
+					config->show_hiddens_alt = true;
+				else if (args[i][j] == 'l')
+					config->long_format = true;
+				else if (args[i][j] == 'r')
+					config->reversed = true;
+				else if (args[i][j] == 'R')
+					config->recursive = true;
+				else if (args[i][j] == 't')
+					config->sort_by_time = true;
+				else if (args[i][j] == 'S')
+					config->sort_by_size = true;
 
-	return (i);
+	return;
 }
 
 /**
