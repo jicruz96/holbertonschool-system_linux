@@ -7,7 +7,7 @@
  **/
 void print_list_long(file_node_t *file_list, ls_config_t *flags)
 {
-	char perms[11], time[14], user[256], group[256], *f;
+	char perms[11], time[14], user[256], group[256], f[256], link_path[256];
 	char *str = "%s %u %s %s %u %s %s\n";
 	struct stat *info;
 	unsigned long num_links;
@@ -17,6 +17,9 @@ void print_list_long(file_node_t *file_list, ls_config_t *flags)
 	if (file_list == NULL)
 		return;
 
+	for (i = 0; i < 256; i++)
+		link_path[i] = '\0';
+
 	for (; file_list != NULL; file_list = file_list->next)
 	{
 		info = file_list->info;
@@ -24,20 +27,25 @@ void print_list_long(file_node_t *file_list, ls_config_t *flags)
 		get_time(time, info->st_mtime);
 		get_user(user, info->st_uid);
 		get_group(group, info->st_gid);
-		f = file_list->name;
+		if (S_ISLNK(info->st_mode) == true)
+		{
+			readlink(file_list->name, link_path, (size_t)256);
+			sprintf(f, "%s -> %s", file_list->name, link_path);
+		}
+		else
+		{
+			sprintf(f, "%s", file_list->name);
+		}
 		num_links = info->st_nlink;
 		size = info->st_size;
 		if (f[0] == '.')
 		{
 			for (i = 1; f[i] == '.'; i++)
 				;
-			if (f[i] == '/' || flags->dot || (f[i] && flags->dot_alt))
-				printf(str, perms, num_links, user, group, size, time, f);
+			if (f[i] != '/' && !flags->dot && !(f[i] && flags->dot_alt))
+				continue;
 		}
-		else
-		{
-			printf(str, perms, num_links, user, group, size, time, f);
-		}
+		printf(str, perms, num_links, user, group, size, time, f);
 	}
 }
 /**
