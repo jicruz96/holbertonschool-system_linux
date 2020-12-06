@@ -56,6 +56,9 @@ void print_list(file_node_t *file_list, ls_config_t *flags)
 {
 	char *delimiter = flags->one_per_line ? "\n" : "  ";
 
+	if (file_list == NULL)
+		return;
+
 	for (; file_list != NULL; file_list = file_list->next)
 		if (PRINT_CHECK(file_list->name) == true)
 			printf("%s%s", file_list->name, delimiter);
