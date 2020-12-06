@@ -36,8 +36,8 @@
  * struct ls_settings_s - flags struct
  * @long_format: long format
  * @one_per_line: -1
- * @show_hiddens: -a
- * @show_hiddens_alt: -A ('.' and '..' ommitted)
+ * @dot: -a
+ * @dot_alt: -A ('.' and '..' ommitted)
  * @reversed: -r
  * @sort_by_size: -S
  * @sort_by_time: -t
@@ -51,8 +51,8 @@ typedef struct ls_settings_s
 {
 	bool long_format;
 	bool one_per_line;
-	bool show_hiddens;
-	bool show_hiddens_alt;
+	bool dot;
+	bool dot_alt;
 	bool reversed;
 	bool sort_by_size;
 	bool sort_by_time;
