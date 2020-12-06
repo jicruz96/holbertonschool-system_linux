@@ -8,7 +8,7 @@
 void print_list_long(file_node_t *file_list, ls_config_t *flags)
 {
 	char perms[11], time[14], user[256], group[256], *f;
-	char *str = "%s %u %s %s %4lu %s %s\n";
+	char *str = "%s %u %s %s %u %s %s\n";
 	struct stat *info;
 	bool print_this;
 	unsigned long num_links;
