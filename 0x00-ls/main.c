@@ -63,9 +63,9 @@ void set_flags(char *arg, ls_config_t *flags)
 		if (arg[i] == '1')
 			flags->one_per_line = true;
 		else if (arg[i] == 'a')
-			flags->show_hiddens = true;
+			flags->dot = true;
 		else if (arg[i] == 'A')
-			flags->show_hiddens_alt = true;
+			flags->dot_alt = true;
 		else if (arg[i] == 'l')
 			flags->long_format = true;
 		else if (arg[i] == 'r')
