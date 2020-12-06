@@ -44,6 +44,27 @@ char *find_char(char *str, char c)
 }
 
 /**
+ * copy_string - custom strcpy
+ * @dest: destination buffer
+ * @src: source string
+ * Return: pointer to dest
+ **/
+char *copy_string(char *dest, char *src)
+{
+	int i;
+
+	if (!dest || !src)
+		return (NULL);
+
+	for (i = 0; src[i]; i++)
+	{
+		dest[i] = src[i];
+	}
+	dest[i] = '\0';
+	return (dest);
+}
+
+/**
 * len - returns the length of a string
 * @s: string to be evaluated
 * Return: integer representing length of string
