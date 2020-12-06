@@ -99,14 +99,12 @@ int add_dir_node(char *dir_name, DIR *stream, dir_node_t **head)
 	new_node->next = NULL;
 	new_node->prev = NULL;
 	new_node->error_code = stream ? 0 : error_code;
-
 	if (new_node->error_code == 0)
 	{
 		while ((read = readdir(stream)) != NULL)
 			error_code = add_file_node(read->d_name, dir_name, &file_head);
 		closedir(stream);
 	}
-
 	new_node->list = file_head;
 	if (*head == NULL)
 	{
