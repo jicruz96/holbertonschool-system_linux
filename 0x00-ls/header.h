@@ -95,7 +95,6 @@ typedef struct dir_node_s
 #define ISLOWER(x) ((x) >= 'a' && (x) <= 'z')
 #define ISUPPER(x) ((x) >= 'A' && (x) <= 'Z')
 
-
 /* Function Prototypes */
 
 /* Long format helper functions (in string_getters.c) */
@@ -116,7 +115,7 @@ int set_flags(char *arg, ls_config_t *flags);
 int add_dir_node(char *name, DIR *stream, dir_node_t **head);
 int add_file_node(char *file_name, char *dir_name, file_node_t **head);
 file_node_t *file_node_init(char *name, struct stat *info);
-char *which_goes_first(char *s1, char *s2);	/* in which_goes_first.c */
+char *which_goes_first(char *s1, char *s2);
 
 /* Printing functions */
 int print_dirs(dir_node_t *head, ls_config_t *flags, print_t printer);
@@ -128,6 +127,5 @@ int print_error_message(char *name);
 char *find_char(char *str, char c);
 char *duplicate_string(char *str);
 int len(char *str);
-
 
 #endif /* HLS_HEADER */
