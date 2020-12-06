@@ -8,44 +8,41 @@
  **/
 int main(int argc, char **argv)
 {
-	int i, status = 0, error_check = 0, num_dirs = 0;
+	int i, status = 0, check = 0, dirs = 0;
 	dir_node_t *dirs_list = NULL;
 	file_node_t *file_list = NULL;
 	DIR *dir_stream;
 	ls_config_t flags = {&print_list, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
 	for (i = 1; i < argc; i++)
+	{
 		if (argv[i][0] == '-' && argv[i][1] != '\0')
 		{
-			error_check = set_flags(argv[i], &flags);
-			if (error_check)
+			if (set_flags(argv[i], &flags))
 			{
 				free_everything(dirs_list, file_list);
-				return (error_check);
+				return (2);
 			}
 		}
 		else
 		{
 			dir_stream = opendir(argv[i]);
 			if (dir_stream == NULL && (errno == ENOTDIR || errno == ENOENT))
-			{
-				error_check = add_file_node(argv[i], "", &file_list);
-			}
+				check = add_file_node(argv[i], "", &file_list);
 			else
-			{
-				error_check = add_dir_node(argv[i], dir_stream, &dirs_list);
-				num_dirs++;
-			}
+				check = add_dir_node(argv[i], dir_stream, &dirs_list), dirs++;
 		}
-	status = error_check ? error_check : status;
-	if (file_list || num_dirs > 1 || (file_list == NULL && status != 0))
+		status = check ? check : status;
+	}
+	if (file_list || dirs > 1 || (file_list == NULL && status != 0))
 		flags.print_dir_name = true;
-	if (num_dirs == 0 && file_list == NULL && status == 0)
+	if (dirs == 0 && file_list == NULL && status == 0)
 		add_dir_node(".", opendir("."), &dirs_list);
 	flags.printer(file_list, &flags);
-	if (num_dirs && file_list)
+	if (dirs && file_list)
 		putchar('\n');
-	status = print_dirs(dirs_list, &flags, flags.printer);
+	check = print_dirs(dirs_list, &flags, flags.printer);
+	status = check ? check : status;
 	free_everything(dirs_list, file_list);
 	return (status ? 2 : 0);
 }
@@ -198,7 +195,7 @@ file_node_t *file_node_init(char *name, struct stat *info)
 	file_node_t *new_node;
 
 	new_node = malloc(sizeof(file_node_t));
-	new_node->name = _strdup(name);
+	new_node->name = duplicate_string(name);
 	new_node->info = info;
 	new_node->next = NULL;
 	new_node->prev = NULL;
