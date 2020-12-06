@@ -1,5 +1,7 @@
 #include "header.h"
-
+#define SWAGGER (!flags->dot_alt || \
+				 _strlen(f) < 2 ||  \
+				 (_strlen(f) == 2 && f[1] == '.'))
 /**
  * print_list_long - prints file lists in long format (ls -l)
  * @file_list: list to print
@@ -23,10 +25,8 @@ void print_list_long(file_node_t *file_list, ls_config_t *flags)
 	for (; file_list != NULL; file_list = file_list->next)
 	{
 		info = file_list->info;
-		get_permissions(perms, info->st_mode);
-		get_time(time, info->st_mtime);
-		get_user(user, info->st_uid);
-		get_group(group, info->st_gid);
+		get_permissions(perms, info->st_mode), get_time(time, info->st_mtime);
+		get_user(user, info->st_uid), get_group(group, info->st_gid);
 		if (S_ISLNK(info->st_mode) == true)
 		{
 			readlink(file_list->name, link_path, (size_t)256);
@@ -38,11 +38,13 @@ void print_list_long(file_node_t *file_list, ls_config_t *flags)
 		}
 		num_links = info->st_nlink;
 		size = info->st_size;
-		if (f[0] == '.')
+		if (flags->dot == false && f[0] == '.')
 		{
-			for (i = 1; f[i] == '.'; i++)
+			for (i = 1; f[i] == '.' && f[i] != '/'; i++)
 				;
-			if (f[i] != '/' && !flags->dot && !(f[i] && flags->dot_alt))
+			if (f[i] == '/')
+				printf(str, perms, num_links, user, group, size, time, f);
+			if (f[i] == '/' || SWAGGER)
 				continue;
 		}
 		printf(str, perms, num_links, user, group, size, time, f);
@@ -65,17 +67,16 @@ void print_list(file_node_t *file_list, ls_config_t *flags)
 	for (; file_list != NULL; file_list = file_list->next)
 	{
 		f = file_list->name;
-		if (f[0] == '.')
+		if (flags->dot == false && f[0] == '.')
 		{
-			for (i = 1; f[i] == '.'; i++)
+			for (i = 1; f[i] == '.' && f[i] != '/'; i++)
 				;
-			if (f[i] == '/' || flags->dot || (f[i] && flags->dot_alt))
+			if (f[i] == '/')
 				printf("%s%s", f, delimiter);
+			if (f[i] == '/' || SWAGGER)
+				continue;
 		}
-		else
-		{
-			printf("%s%s", f, delimiter);
-		}
+		printf("%s%s", f, delimiter);
 	}
 	if (flags->one_per_line == false)
 		putchar('\n');
