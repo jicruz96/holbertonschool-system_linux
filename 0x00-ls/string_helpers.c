@@ -1,11 +1,11 @@
 #include "header.h"
 
 /**
-* _strdup - returns a pointer to a space in memory that has a copy of a string
+* duplicate_string - returns a pointer to duplicate of str
 * @str: string to be copied to newly allocated memory space
 * Return: char pointer to string, or NULL if memory allocation fails
 */
-char *_strdup(char *str)
+char *duplicate_string(char *str)
 {
 	int i, len;
 	char *ptr;
@@ -24,27 +24,31 @@ char *_strdup(char *str)
 }
 
 /**
-* _strcpy - copies src onto buffer pointed to by dest
-* @src: string to copy
-* @dest: buffer where string is to be copied
-* Return: dest
-**/
-char *_strcpy(char *dest, char *src)
+ * find_char - returns a pointer to the first instance of a char 'c' in str
+ * @str: string
+ * @c: char to find in string
+ * Return: pointer to first instance of 'c' . If c not in str, NULL is returned
+ **/
+char *find_char(char *str, char c)
 {
-	int i;
+	if (!str)
+		return (NULL);
 
-	for (i = 0; src[i]; i++)
-		dest[i] = src[i];
-	dest[i] = '\0';
-	return (dest);
+	while (*str)
+		if (*str != c)
+			str++;
+		else
+			return (str);
+
+	return (NULL);
 }
 
 /**
-* _strlen - returns the length of a string
+* len - returns the length of a string
 * @s: string to be evaluated
 * Return: integer representing length of string
 **/
-int _strlen(char *s)
+int len(char *s)
 {
 	int len = 0;
 
