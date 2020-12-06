@@ -95,27 +95,39 @@ typedef struct dir_node_s
 #define ISLOWER(x) ((x) >= 'a' && (x) <= 'z')
 #define ISUPPER(x) ((x) >= 'A' && (x) <= 'Z')
 
+
 /* Function Prototypes */
+
+/* Long format helper functions (in string_getters.c) */
 void get_permissions(char *buffer, mode_t mode);
 void get_group(char *buffer, gid_t group_id);
 void get_user(char *buffer, uid_t user_id);
 void get_time(char *buffer, time_t time_val);
+char get_type(mode_t mode);
+
+/* Freeing functions (in freers.c) */
 void free_everything(dir_node_t *d_head, file_node_t *f_head);
-char *_strdup(char *str);
-char *_strcpy(char *dest, char *src);
+void free_file_list(file_node_t *file_list);
+
+/* Set flags helper function (in main.c) */
+int set_flags(char *arg, ls_config_t *flags);
+
+/* Linked list creation and management functions (mostly in main.c) */
 int add_dir_node(char *name, DIR *stream, dir_node_t **head);
 int add_file_node(char *file_name, char *dir_name, file_node_t **head);
-int set_flags(char *arg, ls_config_t *flags);
-char *which_goes_first(char *s1, char *s2);
-int print_error_message(char *name);
-void print_list(file_node_t *file_list, ls_config_t *flags);
-int print_dirs(dir_node_t *head, ls_config_t *flags, print_t printer);
-void free_file_list(file_node_t *file_list);
 file_node_t *file_node_init(char *name, struct stat *info);
+char *which_goes_first(char *s1, char *s2);	/* in which_goes_first.c */
 
-int _strlen(char *str);
-char get_type(mode_t mode);
+/* Printing functions */
+int print_dirs(dir_node_t *head, ls_config_t *flags, print_t printer);
 void print_list_long(file_node_t *file_list, ls_config_t *flags);
-void get_long_stats(file_node_t *new, struct stat file_info);
+void print_list(file_node_t *file_list, ls_config_t *flags);
+int print_error_message(char *name);
+
+/* Custom string functions (in strin_helpers.c) */
+char *find_char(char *str, char c);
+char *duplicate_string(char *str);
+int len(char *str);
+
 
 #endif /* HLS_HEADER */
