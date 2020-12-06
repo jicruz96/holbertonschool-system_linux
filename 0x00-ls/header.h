@@ -113,6 +113,7 @@ int print_dirs(dir_node_t *head, ls_config_t *flags, print_t printer);
 void free_file_list(file_node_t *file_list);
 file_node_t *file_node_init(char *name, struct stat *info);
 
+int _strlen(char *str);
 char get_type(mode_t mode);
 void print_list_long(file_node_t *file_list, ls_config_t *flags);
 void get_long_stats(file_node_t *new, struct stat file_info);
