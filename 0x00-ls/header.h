@@ -125,6 +125,7 @@ int print_error_message(char *name);
 
 /* Custom string functions (in strin_helpers.c) */
 char *find_char(char *str, char c);
+char *copy_string(char *dest, char *src);
 char *duplicate_string(char *str);
 int len(char *str);
 
