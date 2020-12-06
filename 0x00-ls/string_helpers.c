@@ -38,3 +38,17 @@ char *_strcpy(char *dest, char *src)
 	dest[i] = '\0';
 	return (dest);
 }
+
+/**
+* _strlen - returns the length of a string
+* @s: string to be evaluated
+* Return: integer representing length of string
+**/
+int _strlen(char *s)
+{
+	int len = 0;
+
+	while (s[len])
+		len++;
+	return (len);
+}
