@@ -7,7 +7,7 @@
  **/
 void print_list_long(file_node_t *file_list, ls_config_t *flags)
 {
-	char perms[11], time[14], user[256], group[256], *name;
+	char perms[11], time[14], user[256], group[256], *f;
 	char *str = "%s %u %s %s %4lu %s %s\n";
 	struct stat *info;
 	bool print_this;
@@ -24,18 +24,18 @@ void print_list_long(file_node_t *file_list, ls_config_t *flags)
 		get_time(time, info->st_mtime);
 		get_user(user, info->st_uid);
 		get_group(group, info->st_gid);
-		name = file_list->name;
+		f = file_list->name;
 		num_links = info->st_nlink;
 		size = info->st_size;
-		if (name[0] != '.' || flags->show_hiddens)
+		if (f[0] != '.' || flags->dot)
 			print_this = true;
-		else if (flags->show_hiddens_alt && name[1] != '.' && name[1])
+		else if (flags->dot_alt && f[1] != '.' && f[1])
 			print_this = true;
 		else
 			print_this = false;
 
 		if (print_this == true)
-			printf(str, perms, num_links, user, group, size, time, name);
+			printf(str, perms, num_links, user, group, size, time, f);
 	}
 }
 
@@ -47,41 +47,37 @@ void print_list_long(file_node_t *file_list, ls_config_t *flags)
 void print_list(file_node_t *file_list, ls_config_t *flags)
 {
 	char *delimiter = flags->one_per_line ? "\n" : "  ";
-	char *file_name;
+	char *f;
+	int i;
 
 	if (file_list == NULL)
 		return;
 
 	for (; file_list != NULL; file_list = file_list->next)
 	{
-		file_name = file_list->name;
-		if (file_name[0] == '.')
+		f = file_list->name;
+		if (f[0] == '.')
 		{
-			if (flags->show_hiddens)
-			{
-				printf("%s%s", file_name, delimiter);
-			}
-			else if (flags->show_hiddens_alt)
-			{
-				if (file_name[1] != '.' && file_name[1] != '\0')
-					printf("%s%s", file_name, delimiter);
-			}
+			for (i = 1; f[i] == '.'; i++)
+				;
+			if (f[i] == '/' || flags->dot || (f[i] && flags->dot_alt))
+				printf("%s%s", f, delimiter);
 		}
 		else
 		{
-			printf("%s%s", file_name, delimiter);
+			printf("%s%s", f, delimiter);
 		}
 	}
-	if (delimiter[0] != '\n')
+	if (flags->one_per_line == false)
 		putchar('\n');
 }
 
 /**
  * print_error_message - does what it says, doc
- * @name: name to place on error message
+ * @f: f to place on error message
  * Return: error code
  **/
-int print_error_message(char *name)
+int print_error_message(char *f)
 {
 	char buffer[256];
 	char *error_message;
@@ -92,7 +88,7 @@ int print_error_message(char *name)
 	else
 		error_message = "hls: cannot access %s";
 
-	sprintf(buffer, error_message, name);
+	sprintf(buffer, error_message, f);
 	perror(buffer);
 	return (status);
 }
