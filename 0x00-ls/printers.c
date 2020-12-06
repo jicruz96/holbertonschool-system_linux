@@ -13,6 +13,7 @@ void print_list_long(file_node_t *file_list, ls_config_t *flags)
 	bool print_this;
 	unsigned long num_links;
 	off_t size;
+	int i;
 
 	if (file_list == NULL)
 		return;
@@ -27,15 +28,17 @@ void print_list_long(file_node_t *file_list, ls_config_t *flags)
 		f = file_list->name;
 		num_links = info->st_nlink;
 		size = info->st_size;
-		if (f[0] != '.' || flags->dot)
-			print_this = true;
-		else if (flags->dot_alt && f[1] != '.' && f[1])
-			print_this = true;
+		if (f[0] == '.')
+		{
+			for (i = 1; f[i] == '.'; i++)
+				;
+			if (f[i] == '/' || flags->dot || (f[i] && flags->dot_alt))
+				printf(str, perms, num_links, user, group, size, time, f);
+		}
 		else
-			print_this = false;
-
-		if (print_this == true)
+		{
 			printf(str, perms, num_links, user, group, size, time, f);
+		}
 	}
 }
 
