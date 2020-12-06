@@ -1,7 +1,10 @@
 #include "header.h"
-#define SWAGGER (!flags->dot_alt || \
-				 _strlen(f) < 2 ||  \
-				 (_strlen(f) == 2 && f[1] == '.'))
+#define IS_PARENT_DIR(x) (len(x) == 2 && x[0] == '.' && x[1] == '.')
+#define IS_CWD(x) (len(x) == 1 && x[0] == '.')
+#define IS_PATH(x) (find_char(x, '/') != NULL)
+#define IS_HIDDEN(x) (x[0] == '.')
+#define PRINT_CHECK(x) (!IS_HIDDEN(x) || IS_PATH(x) || flags->dot || \
+						(flags->dot_alt && !IS_CWD(x) && !IS_PARENT_DIR(x)))
 /**
  * print_list_long - prints file lists in long format (ls -l)
  * @file_list: list to print
@@ -23,32 +26,26 @@ void print_list_long(file_node_t *file_list, ls_config_t *flags)
 		link_path[i] = '\0';
 
 	for (; file_list != NULL; file_list = file_list->next)
-	{
-		info = file_list->info;
-		get_permissions(perms, info->st_mode), get_time(time, info->st_mtime);
-		get_user(user, info->st_uid), get_group(group, info->st_gid);
-		if (S_ISLNK(info->st_mode) == true)
+		if (PRINT_CHECK(file_list->name) == true)
 		{
-			readlink(file_list->name, link_path, (size_t)256);
-			sprintf(f, "%s -> %s", file_list->name, link_path);
+			info = file_list->info;
+			get_permissions(perms, info->st_mode);
+			get_time(time, info->st_mtime);
+			get_user(user, info->st_uid);
+			get_group(group, info->st_gid);
+			if (S_ISLNK(info->st_mode) == true)
+			{
+				readlink(file_list->name, link_path, (size_t)256);
+				sprintf(f, "%s -> %s", file_list->name, link_path);
+			}
+			else
+			{
+				sprintf(f, "%s", file_list->name);
+			}
+			num_links = info->st_nlink;
+			size = info->st_size;
+			printf(str, perms, num_links, user, group, size, time, f);
 		}
-		else
-		{
-			sprintf(f, "%s", file_list->name);
-		}
-		num_links = info->st_nlink;
-		size = info->st_size;
-		if (flags->dot == false && f[0] == '.')
-		{
-			for (i = 1; f[i] == '.' && f[i] != '/'; i++)
-				;
-			if (f[i] == '/')
-				printf(str, perms, num_links, user, group, size, time, f);
-			if (f[i] == '/' || SWAGGER)
-				continue;
-		}
-		printf(str, perms, num_links, user, group, size, time, f);
-	}
 }
 /**
  * print_list - prints lists
@@ -58,26 +55,11 @@ void print_list_long(file_node_t *file_list, ls_config_t *flags)
 void print_list(file_node_t *file_list, ls_config_t *flags)
 {
 	char *delimiter = flags->one_per_line ? "\n" : "  ";
-	char *f;
-	int i;
-
-	if (file_list == NULL)
-		return;
 
 	for (; file_list != NULL; file_list = file_list->next)
-	{
-		f = file_list->name;
-		if (flags->dot == false && f[0] == '.')
-		{
-			for (i = 1; f[i] == '.' && f[i] != '/'; i++)
-				;
-			if (f[i] == '/')
-				printf("%s%s", f, delimiter);
-			if (f[i] == '/' || SWAGGER)
-				continue;
-		}
-		printf("%s%s", f, delimiter);
-	}
+		if (PRINT_CHECK(file_list->name) == true)
+			printf("%s%s", file_list->name, delimiter);
+
 	if (flags->one_per_line == false)
 		putchar('\n');
 }
