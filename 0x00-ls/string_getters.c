@@ -9,7 +9,7 @@ void get_user(char *buffer, uid_t user_id)
 {
 	struct passwd *user_info = getpwuid(user_id);
 
-	if (user_info->pw_name)
+	if (user_info->pw_name[0])
 		_strcpy(buffer, user_info->pw_name);
 	else
 		sprintf(buffer, "%u", user_id);
@@ -45,7 +45,7 @@ void get_group(char *buffer, gid_t group_id)
 {
 	struct group *group_info = getgrgid(group_id);
 
-	if (group_info->gr_name)
+	if (group_info->gr_name[0])
 		_strcpy(buffer, group_info->gr_name);
 	else
 		sprintf(buffer, "%u", group_id);
