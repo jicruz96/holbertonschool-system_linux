@@ -12,13 +12,17 @@ int main(int argc, char **argv)
 	dir_node_t *dirs_list = NULL;
 	file_node_t *file_list = NULL;
 	DIR *dir_stream;
-	print_t printer;
-	ls_config_t flags = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+	ls_config_t flags = {&print_list, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
 	for (i = 1; i < argc; i++)
 		if (argv[i][0] == '-' && argv[i][1] != '\0')
 		{
-			set_flags(argv[i], &flags);
+			error_check = set_flags(argv[i], &flags);
+			if (error_check)
+			{
+				free_everything(dirs_list, file_list);
+				return (error_check);
+			}
 		}
 		else
 		{
@@ -32,20 +36,16 @@ int main(int argc, char **argv)
 				error_check = add_dir_node(argv[i], dir_stream, &dirs_list);
 				num_dirs++;
 			}
-			status = error_check ? error_check : status;
 		}
-
+	status = error_check ? error_check : status;
 	if (file_list || num_dirs > 1 || (file_list == NULL && status != 0))
 		flags.print_dir_name = true;
-
 	if (num_dirs == 0 && file_list == NULL && status == 0)
 		add_dir_node(".", opendir("."), &dirs_list);
-
-	printer = flags.long_format ? &print_list_long : &print_list;
-	printer(file_list, &flags);
+	flags.printer(file_list, &flags);
 	if (num_dirs && file_list)
 		putchar('\n');
-	status = print_dirs(dirs_list, &flags, printer);
+	status = print_dirs(dirs_list, &flags, flags.printer);
 	free_everything(dirs_list, file_list);
 	return (status ? 2 : 0);
 }
@@ -54,8 +54,9 @@ int main(int argc, char **argv)
  * set_flags - sets configurations for ls command
  * @arg: argument
  * @flags: flags struct
+ * Return: 0 on success | 2 if invalid option encountered
  **/
-void set_flags(char *arg, ls_config_t *flags)
+int set_flags(char *arg, ls_config_t *flags)
 {
 	int i;
 
@@ -67,7 +68,7 @@ void set_flags(char *arg, ls_config_t *flags)
 		else if (arg[i] == 'A')
 			flags->dot_alt = true;
 		else if (arg[i] == 'l')
-			flags->long_format = true;
+			flags->printer = &print_list_long;
 		else if (arg[i] == 'r')
 			flags->reversed = true;
 		else if (arg[i] == 'R')
@@ -77,7 +78,12 @@ void set_flags(char *arg, ls_config_t *flags)
 		else if (arg[i] == 'S')
 			flags->sort_by_size = true;
 		else
-			fprintf(stderr, "hls: invalid option -- '%c'", arg[i]), exit(2);
+		{
+			fprintf(stderr, "hls: invalid option -- '%c'\n", arg[i]);
+			fprintf(stderr, "Try 'hls --help' for more information.\n");
+			return (2);
+		}
+	return (0);
 }
 
 /**
