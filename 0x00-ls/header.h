@@ -30,6 +30,7 @@
 /**
  * struct file_link_s - file linked list node
  * @name: file name
+ * @dir_name: dir name
  * @info: stat struct with file info
  * @next: next
  * @prev: prev
@@ -37,6 +38,7 @@
 typedef struct file_link_s
 {
 	char *name;
+	char *dir_name;
 	struct stat *info;
 	struct file_link_s *next;
 	struct file_link_s *prev;
@@ -114,7 +116,7 @@ int set_flags(char *arg, ls_config_t *flags);
 /* Linked list creation and management functions (mostly in main.c) */
 int add_dir_node(char *name, DIR *stream, dir_node_t **head);
 int add_file_node(char *file_name, char *dir_name, file_node_t **head);
-file_node_t *file_node_init(char *name, struct stat *info);
+file_node_t *file_node_init(char *name, char *dir_name, struct stat *info);
 char *which_goes_first(char *s1, char *s2);
 
 /* Printing functions */

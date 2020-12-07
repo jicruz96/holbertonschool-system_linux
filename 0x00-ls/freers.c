@@ -14,6 +14,7 @@ void free_file_list(file_node_t *file_list)
 		tmp = tmp->next;
 		free(prev->info);
 		free(prev->name);
+		free(prev->dir_name);
 		free(prev);
 	}
 }

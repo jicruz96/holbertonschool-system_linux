@@ -12,7 +12,7 @@
  **/
 void print_list_long(file_node_t *file_list, ls_config_t *flags)
 {
-	char perms[11], time[14], user[256], group[256], name[256];
+	char perms[11], time[14], user[256], group[256], name[256], buf[256];
 	char sym_link_path[256];
 	char *str = "%s %u %s %s %u %s %s";
 	unsigned long num_links, size, i;
@@ -35,7 +35,8 @@ void print_list_long(file_node_t *file_list, ls_config_t *flags)
 			{
 				for (i = 0; i < 256; i++)
 					sym_link_path[i] = '\0';
-				readlink(file_list->name, sym_link_path, (size_t)256);
+				sprintf(buf, "%s/%s", file_list->dir_name, file_list->name);
+				readlink(buf, sym_link_path, 256);
 				printf(" -> %s", sym_link_path);
 			}
 			putchar('\n');

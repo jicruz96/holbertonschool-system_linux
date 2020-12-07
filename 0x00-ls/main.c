@@ -160,7 +160,7 @@ int add_file_node(char *file_name, char *dir_name, file_node_t **head)
 		free(info);
 		return (print_error_message(file_name));
 	}
-	new_node = file_node_init(file_name, info);
+	new_node = file_node_init(file_name, dir_name, info);
 	if (*head == NULL)
 	{
 		*head = new_node;
@@ -187,15 +187,17 @@ int add_file_node(char *file_name, char *dir_name, file_node_t **head)
 /**
  * file_node_init - init file node
  * @name: name
+ * @dir_name: dir name
  * @info: info
  * Return: pointer to node
  **/
-file_node_t *file_node_init(char *name, struct stat *info)
+file_node_t *file_node_init(char *name, char *dir_name, struct stat *info)
 {
 	file_node_t *new_node;
 
 	new_node = malloc(sizeof(file_node_t));
 	new_node->name = duplicate_string(name);
+	new_node->dir_name = duplicate_string(dir_name);
 	new_node->info = info;
 	new_node->next = NULL;
 	new_node->prev = NULL;
