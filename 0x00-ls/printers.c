@@ -13,20 +13,15 @@
 void print_list_long(file_node_t *file_list, ls_config_t *flags)
 {
 	char perms[11], t[14], user[256], group[256], f[256];
-	/*char sym_link_path[256];*/
+	char sym_link_path[256];
 	char *str = "%s %u %s %s %u %s %s\n";
 	struct stat *info;
 	unsigned long num_links;
 	off_t size;
-	/*int i;*/
+	int i;
 
 	if (file_list == NULL)
 		return;
-
-	/**
-	 * for (i = 0; i < 256; i++)
-	 * sym_link_path[i] = '\0';
-	 **/
 
 	for (; file_list != NULL; file_list = file_list->next)
 		if (PRINT_CHECK(file_list->name) == true)
@@ -36,17 +31,18 @@ void print_list_long(file_node_t *file_list, ls_config_t *flags)
 			get_time(t, info->st_mtime);
 			get_user(user, info->st_uid);
 			get_group(group, info->st_gid);
-			/*
-			 * if (S_ISLNK(info->st_mode) == true)
-			 * {
-			 *	readlink(file_list->name, sym_link_path, (size_t)256);
-			 *	sprintf(f, "%s -> %s", file_list->name, sym_link_path);
-			 * }
-			 * else
-			 * {
-			 * copy_string(f, file_list->name);
-			 */
-			copy_string(f, file_list->name);
+
+			if (S_ISLNK(info->st_mode) == true)
+			{
+				for (i = 0; i < 256; i++)
+					sym_link_path[i] = '\0';
+				readlink(file_list->name, sym_link_path, (size_t)256);
+				sprintf(f, "%s -> %s", file_list->name, sym_link_path);
+			}
+			else
+			{
+				copy_string(f, file_list->name);
+			}
 			num_links = info->st_nlink;
 			size = info->st_size;
 			printf(str, perms, num_links, user, group, size, t, f);
