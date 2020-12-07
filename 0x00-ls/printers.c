@@ -92,10 +92,15 @@ int print_error_message(char *f)
  **/
 int print_dirs(dir_node_t *head, ls_config_t *flags, print_t printer)
 {
-	dir_node_t *tmp;
+	dir_node_t *tmp = head;
 	int status = 0;
 
-	for (tmp = head; tmp != NULL; tmp = tmp->next)
+	if (flags->reversed)
+		while (tmp->next)
+			tmp = tmp->next;
+
+	while (tmp)
+	{
 		if (tmp->error_code)
 		{
 			status = print_error_message(tmp->dir_name);
@@ -105,8 +110,10 @@ int print_dirs(dir_node_t *head, ls_config_t *flags, print_t printer)
 			if (flags->print_dir_name)
 				printf("%s:\n", tmp->dir_name);
 			printer(tmp->list, flags);
-			if (tmp->next != NULL)
+			if (flags->reversed ? tmp->prev : tmp->next)
 				putchar('\n');
 		}
+		tmp = flags->reversed ? tmp->prev : tmp->next;
+	}
 	return (status);
 }
