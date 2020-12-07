@@ -12,13 +12,10 @@
  **/
 void print_list_long(file_node_t *file_list, ls_config_t *flags)
 {
-	char perms[11], t[14], user[256], group[256], f[256];
+	char perms[11], time[14], user[256], group[256], name[256];
 	char sym_link_path[256];
-	char *str = "%s %u %s %s %u %s %s\n";
-	struct stat *info;
-	unsigned long num_links;
-	off_t size;
-	int i;
+	char *str = "%s %u %s %s %u %s %s";
+	unsigned long num_links, size, i;
 
 	if (file_list == NULL)
 		return;
@@ -26,26 +23,22 @@ void print_list_long(file_node_t *file_list, ls_config_t *flags)
 	for (; file_list != NULL; file_list = file_list->next)
 		if (PRINT_CHECK(file_list->name) == true)
 		{
-			info = file_list->info;
-			get_permissions(perms, info->st_mode);
-			get_time(t, info->st_mtime);
-			get_user(user, info->st_uid);
-			get_group(group, info->st_gid);
-
-			if (S_ISLNK(info->st_mode) == true)
+			get_permissions(perms, file_list->info->st_mode);
+			get_time(time, file_list->info->st_mtime);
+			get_user(user, file_list->info->st_uid);
+			get_group(group, file_list->info->st_gid);
+			copy_string(name, file_list->name);
+			num_links = file_list->info->st_nlink;
+			size = file_list->info->st_size;
+			printf(str, perms, num_links, user, group, size, time, name);
+			if (S_ISLNK(file_list->info->st_mode) == true)
 			{
 				for (i = 0; i < 256; i++)
 					sym_link_path[i] = '\0';
 				readlink(file_list->name, sym_link_path, (size_t)256);
-				sprintf(f, "%s -> %s", file_list->name, sym_link_path);
+				printf(" -> %s", sym_link_path);
 			}
-			else
-			{
-				copy_string(f, file_list->name);
-			}
-			num_links = info->st_nlink;
-			size = info->st_size;
-			printf(str, perms, num_links, user, group, size, t, f);
+			putchar('\n');
 		}
 }
 /**
