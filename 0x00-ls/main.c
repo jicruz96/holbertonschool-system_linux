@@ -14,8 +14,7 @@ int main(int argc, char **argv)
 	DIR *dir_stream;
 	ls_config_t flags = {&print_list, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
-	for (i = 1; i < argc; i++)
-	{
+	for (i = 1; i < argc; i++, status = check ? check : status)
 		if (argv[i][0] == '-' && argv[i][1] != '\0')
 		{
 			if (set_flags(argv[i], &flags))
@@ -32,8 +31,7 @@ int main(int argc, char **argv)
 			else
 				check = add_dir_node(argv[i], dir_stream, &dirs_list), dirs++;
 		}
-		status = check ? check : status;
-	}
+
 	if (file_list || dirs > 1 || (file_list == NULL && status != 0))
 		flags.print_dir_name = true;
 	if (dirs == 0 && file_list == NULL && status == 0)
