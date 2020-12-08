@@ -135,5 +135,8 @@ file_node_t *sort_file_list_by_time(file_node_t *head);
 file_node_t *sort_file_list_by_size(file_node_t *head);
 file_node_t *confirm_sorted_by_size(file_node_t *head);
 file_node_t *confirm_sorted_by_time(file_node_t *head);
+file_node_t *sort(file_node_t *head);
+int compare(file_node_t *a, file_node_t *b);
+void swap(file_node_t *a, file_node_t *b);
 
 #endif /* HLS_HEADER */

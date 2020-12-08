@@ -58,6 +58,7 @@ void print_list(file_node_t *file_list, ls_config_t *flags)
 {
 	char *delimiter = flags->one_per_line ? "\n" : "  ";
 	file_node_t *next;
+	bool first_file = true;
 	bool rev = flags->reversed && (flags->sort_by_size || flags->sort_by_time);
 
 	if (file_list == NULL)
@@ -78,9 +79,13 @@ void print_list(file_node_t *file_list, ls_config_t *flags)
 	{
 		next = rev ? file_list->prev : file_list->next;
 		if (PRINT_CHECK(file_list->name) == true)
-			printf("%s%s", file_list->name, next == NULL ? "\n" : delimiter);
+		{
+			printf("%s%s", first_file ? "" : delimiter, file_list->name);
+			first_file = false;
+		}
 		file_list = next;
 	}
+	putchar('\n');
 }
 
 /**
@@ -92,7 +97,6 @@ int print_error_message(char *f)
 {
 	char buffer[256];
 	char *error_message;
-	int status = errno;
 
 	if (errno == 13)
 		error_message = "hls: cannot open directory %s";
@@ -101,7 +105,7 @@ int print_error_message(char *f)
 
 	sprintf(buffer, error_message, f);
 	perror(buffer);
-	return (status);
+	return (2);
 }
 
 /**
@@ -133,7 +137,7 @@ int print_dirs(dir_node_t *head, ls_config_t *flags, print_t printer)
 			if (flags->sort_by_size)
 				tmp->list = sort_file_list_by_size(tmp->list);
 			if (flags->sort_by_time)
-				tmp->list = sort_file_list_by_time(tmp->list);
+				tmp->list = sort(tmp->list);
 			printer(tmp->list, flags);
 			if (flags->reversed ? tmp->prev : tmp->next)
 				putchar('\n');
