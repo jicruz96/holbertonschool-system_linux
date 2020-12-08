@@ -20,7 +20,12 @@ void print_list_long(file_node_t *file_list, ls_config_t *flags)
 	if (file_list == NULL)
 		return;
 
-	for (; file_list != NULL; file_list = file_list->next)
+	if (flags->reversed)
+		while (file_list->next)
+			file_list = file_list->next;
+
+	while (file_list != NULL)
+	{
 		if (PRINT_CHECK(file_list->name) == true)
 		{
 			get_permissions(perms, file_list->info->st_mode);
@@ -41,6 +46,8 @@ void print_list_long(file_node_t *file_list, ls_config_t *flags)
 			}
 			putchar('\n');
 		}
+		file_list = flags->reversed ? file_list->prev : file_list->next;
+	}
 }
 /**
  * print_list - prints lists
@@ -50,17 +57,29 @@ void print_list_long(file_node_t *file_list, ls_config_t *flags)
 void print_list(file_node_t *file_list, ls_config_t *flags)
 {
 	char *delimiter = flags->one_per_line ? "\n" : "  ";
+	file_node_t *next;
 
 	if (file_list == NULL)
 		return;
 
-	for (; file_list != NULL; file_list = file_list->next)
+	if (flags->reversed)
+	{
+		while (file_list->next)
+			file_list = file_list->next;
+		next = file_list->prev;
+	}
+	else
+	{
+		next = file_list->next;
+	}
+
+	while (file_list != NULL)
+	{
+		next = flags->reversed ? file_list->prev : file_list->next;
 		if (PRINT_CHECK(file_list->name) == true)
-		{
-			if (file_list->next == NULL)
-				delimiter = "\n";
-			printf("%s%s", file_list->name, delimiter);
-		}
+			printf("%s%s", file_list->name, next == NULL ? "\n" : delimiter);
+		file_list = next;
+	}
 }
 
 /**
