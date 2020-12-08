@@ -16,6 +16,12 @@ char *which_goes_first(char *s1, char *s2)
 	if (*s2 == '\0')
 		return (s2);
 
+	if (*s1 == '.')
+		return (which_goes_first(s2, s1 + 1) == s1 + 1 ? s1 : s2);
+
+	if (*s2 == '.')
+		return (which_goes_first(s1, s2 + 1) == s2 + 1 ? s2 : s1);
+
 	if (*s1 + 32 * ISUPPER(*s1) == *s2 + 32 * ISUPPER(*s2))
 	{
 		tmp = which_goes_first(s1 + 1, s2 + 1);
