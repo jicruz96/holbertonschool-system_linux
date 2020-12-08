@@ -56,10 +56,11 @@ void print_list(file_node_t *file_list, ls_config_t *flags)
 
 	for (; file_list != NULL; file_list = file_list->next)
 		if (PRINT_CHECK(file_list->name) == true)
+		{
+			if (file_list->next == NULL)
+				delimiter = "\n";
 			printf("%s%s", file_list->name, delimiter);
-
-	if (flags->one_per_line == false)
-		putchar('\n');
+		}
 }
 
 /**
