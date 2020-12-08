@@ -131,4 +131,9 @@ char *copy_string(char *dest, char *src);
 char *duplicate_string(char *str);
 int len(char *str);
 
+file_node_t *sort_file_list_by_time(file_node_t *head);
+file_node_t *sort_file_list_by_size(file_node_t *head);
+file_node_t *confirm_sorted_by_size(file_node_t *head);
+file_node_t *confirm_sorted_by_time(file_node_t *head);
+
 #endif /* HLS_HEADER */

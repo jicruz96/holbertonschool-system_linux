@@ -109,6 +109,10 @@ int print_dirs(dir_node_t *head, ls_config_t *flags, print_t printer)
 		{
 			if (flags->print_dir_name)
 				printf("%s:\n", tmp->dir_name);
+			if (flags->sort_by_size)
+				tmp->list = sort_file_list_by_size(tmp->list);
+			if (flags->sort_by_time)
+				tmp->list = sort_file_list_by_time(tmp->list);
 			printer(tmp->list, flags);
 			if (flags->reversed ? tmp->prev : tmp->next)
 				putchar('\n');
