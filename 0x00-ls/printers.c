@@ -20,7 +20,7 @@ void print_list_long(file_node_t *file_list, ls_config_t *flags)
 	if (file_list == NULL)
 		return;
 
-	if (flags->reversed)
+	if (flags->reversed && (flags->sort_by_size || flags->sort_by_time))
 		while (file_list->next)
 			file_list = file_list->next;
 
@@ -58,11 +58,12 @@ void print_list(file_node_t *file_list, ls_config_t *flags)
 {
 	char *delimiter = flags->one_per_line ? "\n" : "  ";
 	file_node_t *next;
+	bool rev = flags->reversed && (flags->sort_by_size || flags->sort_by_time);
 
 	if (file_list == NULL)
 		return;
 
-	if (flags->reversed)
+	if (rev)
 	{
 		while (file_list->next)
 			file_list = file_list->next;
@@ -75,7 +76,7 @@ void print_list(file_node_t *file_list, ls_config_t *flags)
 
 	while (file_list != NULL)
 	{
-		next = flags->reversed ? file_list->prev : file_list->next;
+		next = rev ? file_list->prev : file_list->next;
 		if (PRINT_CHECK(file_list->name) == true)
 			printf("%s%s", file_list->name, next == NULL ? "\n" : delimiter);
 		file_list = next;
