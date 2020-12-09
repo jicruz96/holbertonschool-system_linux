@@ -6,23 +6,16 @@ This is the first project of the Holberton School Linux System section of the Lo
 
 In this project, we built our own **custom version of the `ls` command** from the ground up.
 
-**Our version is called `hls` and is available to download and use**
+**Our version is called `hls` and is available to download and use in Linux distributions**
 
-### Linux / MacOS download
 ```
 $ wget https://github.com/jicruz96/holbertonschool-system_linux/blob/main/0x00-ls/hls
-```
-
-### Windows download
-```
-$ curl https://github.com/jicruz96/holbertonschool-system_linux/blob/main/0x00-ls/hls -O hls
 ```
 
 Execute the hls file:
 ```
 $ ./hls
 ```
-
 🎉🎉🎉 *Ta-dah!* Output! Looks like `ls`, don't it? Check the next section to see what our program can and cannot do.
 
 Move the hls file to a folder within your PATH to use as a terminal command, if you're so inclined.
