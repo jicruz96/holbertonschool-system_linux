@@ -4,6 +4,7 @@ This repository contains all projects from the Holberton School Low-Level System
 
 ## Project Descriptions
 
-| Project | Description |
-|---------|-------------|
-| ls      | Building our own version of the `ls` command |
+| Project      | Description |
+|--------------|-------------|
+| [0x00-ls](./0x00-ls)      | Build a custom version of the `ls` command from scratch |
+| [0x01-getline](./0x01-getline) | Build a custom version of the C standard library `getline` function from scratch |
