@@ -6,7 +6,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define READ_SIZE 1
+#define READ_SIZE 1024
 
 /**
  * struct reader_s -    associates a file descriptor to its file's contents.
