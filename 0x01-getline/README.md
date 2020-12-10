@@ -25,14 +25,14 @@ We were only allowed to use the folllowing C Standard Library functions and syst
 | `void exit(int status)`     | <div align="center">**Terminate program with status number**</div> |
 | `void free(void *ptr)`     | <div align="center">**Free allocated memory pointed to by pointer**</div> |
 | `void *malloc(size_t size)`   | <div align="center">**Allocate `size` bytes of dynamic memory**</div> |
+| `void *memset(void *buf, int c, size_t size)` | <div align="center">**Set `size` bytes of `buf` to the value `c`**</div> |
 
-We were also allowed to use the following functions, but I chose to rewrite these from scratch:
+We were also allowed to use the following functions, but I either didn't use them or chose to rewrite them from scratch:
 
-* `strcpy`
-* `strncpy`
-* `strdup`
-* `strcat`
-* `memset`
-* `memcpy`
+* `memcpy` - written from scratch
+* `strcpy` - not used
+* `strncpy` - not used
+* `strdup` - not used
+* `strcat` - not used
 
 > Written by J. to the is I.
