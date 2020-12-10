@@ -59,7 +59,7 @@ char *return_line(reader_t *rd)
 	if (READ_SIZE + len > rd->buf_size)
 	{
 		rd->buf = realloc(rd->buf, READ_SIZE + len);
-		if ((rd->buf == NULL)
+		if (rd->buf == NULL)
 			return (NULL);
 	}
 	memset(rd->buf + len, '\0', rd->num_bytes - len);
