@@ -78,10 +78,10 @@ char *return_line(reader_t *rd)
 }
 
 /**
- * reader_init -	initializes new "reader" node. The reader associates a file
- *					descriptor to a buffer. _getline uses this buffer to parse
- *					through the lines of the file and read more file contents
- *					when necessary.
+ * reader_init - initializes new "reader" node. The reader associates a file
+ *				 descriptor to a buffer. _getline uses this buffer to parse
+ *				 through the lines of the file and read more file contents
+ *				 when necessary.
  *
  * @fd: file descriptor
  * Return: pointer to new node
@@ -132,8 +132,8 @@ char *free_readers(reader_t **readers)
 }
 
 /**
- * _memcpy -	custom memcpy. Normal memcpy raises an error if the two
- *				pointer areas overlap. This one does not.
+ * _memcpy - custom memcpy. Normal memcpy raises an error if the two
+ *			 pointer areas overlap. This one does not.
  *
  * @dest: pointer to buffer where memory will be copies
  * @src: source of content to be copied
