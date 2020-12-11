@@ -1,10 +1,5 @@
 #include "header.h"
-#define IS_PARENT_DIR(x) (len(x) == 2 && x[0] == '.' && x[1] == '.')
-#define IS_CWD(x) (len(x) == 1 && x[0] == '.')
-#define IS_PATH(x) (find_char(x, '/') != NULL)
-#define IS_HIDDEN(x) (x[0] == '.')
-#define PRINT_CHECK(x) (!IS_HIDDEN(x) || IS_PATH(x) || flags->dot || \
-						(flags->dot_alt && !IS_CWD(x) && !IS_PARENT_DIR(x)))
+
 /**
  * print_list_long - prints file lists in long format (ls -l)
  * @file_list: list to print
@@ -20,7 +15,7 @@ void print_list_long(file_node_t *file_list, ls_config_t *flags)
 	if (file_list == NULL)
 		return;
 
-	if (flags->reversed && (flags->sort_by_size || flags->sort_by_time))
+	if (flags->reversed)
 		while (file_list->next)
 			file_list = file_list->next;
 
@@ -115,9 +110,9 @@ int print_error_message(char *f)
  * @printer: printer function
  * Return: status
  **/
-int print_dirs(dir_node_t *head, ls_config_t *flags, print_t printer)
+int print_dirs(dir_node_t **head, ls_config_t *flags, print_t printer)
 {
-	dir_node_t *tmp = head;
+	dir_node_t *tmp = *head;
 	int status = 0;
 
 	if (flags->reversed)
@@ -132,6 +127,8 @@ int print_dirs(dir_node_t *head, ls_config_t *flags, print_t printer)
 		}
 		else
 		{
+			if (flags->recursive)
+				recurse_list(head, tmp, flags);
 			if (flags->print_dir_name)
 				printf("%s:\n", tmp->dir_name);
 			if (flags->sort_by_size)

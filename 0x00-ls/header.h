@@ -97,6 +97,13 @@ typedef struct dir_node_s
 #define ISLOWER(x) ((x) >= 'a' && (x) <= 'z')
 #define ISUPPER(x) ((x) >= 'A' && (x) <= 'Z')
 
+#define IS_PARENT_DIR(x) (len(x) == 2 && x[0] == '.' && x[1] == '.')
+#define IS_CWD(x) (len(x) == 1 && x[0] == '.')
+#define IS_PATH(x) (find_char(x, '/') != NULL)
+#define IS_HIDDEN(x) (x[0] == '.')
+#define PRINT_CHECK(x) (!IS_HIDDEN(x) || IS_PATH(x) || flags->dot || \
+						(flags->dot_alt && !IS_CWD(x) && !IS_PARENT_DIR(x)))
+
 /* Function Prototypes */
 
 /* Long format helper functions (in string_getters.c) */
@@ -113,30 +120,33 @@ void free_file_list(file_node_t *file_list);
 /* Set flags helper function (in main.c) */
 int set_flags(char *arg, ls_config_t *flags);
 
-/* Linked list creation and management functions (mostly in main.c) */
+/* Linked list creation functions (in node_makers.c) */
+dir_node_t *add_subdirs(dir_node_t *dir, ls_config_t *flags);
+void recurse_list(dir_node_t **head, dir_node_t *dir, ls_config_t *flags);
 int add_dir_node(char *name, DIR *stream, dir_node_t **head);
 int add_file_node(char *file_name, char *dir_name, file_node_t **head);
 file_node_t *file_node_init(char *name, char *dir_name, struct stat *info);
+
+/* Alphabetization logic (in which_goes_first.c) */
 char *which_goes_first(char *s1, char *s2);
 
 /* Printing functions */
-int print_dirs(dir_node_t *head, ls_config_t *flags, print_t printer);
+int print_dirs(dir_node_t **head, ls_config_t *flags, print_t printer);
 void print_list_long(file_node_t *file_list, ls_config_t *flags);
 void print_list(file_node_t *file_list, ls_config_t *flags);
 int print_error_message(char *name);
 
-/* Custom string functions (in strin_helpers.c) */
+/* Custom string functions (in string_helpers.c) */
 char *find_char(char *str, char c);
 char *copy_string(char *dest, char *src);
 char *duplicate_string(char *str);
 int len(char *str);
 
-file_node_t *sort_file_list_by_time(file_node_t *head);
-file_node_t *sort_file_list_by_size(file_node_t *head);
-file_node_t *confirm_sorted_by_size(file_node_t *head);
-file_node_t *confirm_sorted_by_time(file_node_t *head);
-file_node_t *sort(file_node_t *head);
+/* sorting functions */
 int compare(file_node_t *a, file_node_t *b);
 void swap(file_node_t *a, file_node_t *b);
+file_node_t *sort(file_node_t *head);
 
+file_node_t *sort_file_list_by_size(file_node_t *head);
+file_node_t *confirm_sorted_by_size(file_node_t *head);
 #endif /* HLS_HEADER */

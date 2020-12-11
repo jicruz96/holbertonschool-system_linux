@@ -37,6 +37,7 @@ void free_everything(dir_node_t *d_head, file_node_t *f_head)
 		free_file_list(f);
 		prev = d_head;
 		d_head = d_head->next;
+		free(prev->dir_name);
 		free(prev);
 	}
 }
