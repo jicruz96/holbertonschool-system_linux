@@ -82,6 +82,7 @@ typedef void (*print_t)(file_node_t *, struct ls_config_s *);
  * @dir_name: dir name
  * @list: list
  * @error_code: error_code
+ * @size: size in bytes
  * @next: next
  * @prev: prev
  **/
@@ -90,6 +91,7 @@ typedef struct dir_node_s
 	char *dir_name;
 	file_node_t *list;
 	int error_code;
+	int size;
 	struct dir_node_s *next;
 	struct dir_node_s *prev;
 } dir_node_t;
@@ -142,11 +144,16 @@ char *copy_string(char *dest, char *src);
 char *duplicate_string(char *str);
 int len(char *str);
 
-/* sorting functions */
-int compare(file_node_t *a, file_node_t *b);
-void swap(file_node_t *a, file_node_t *b);
-file_node_t *sort(file_node_t *head);
-
-file_node_t *sort_file_list_by_size(file_node_t *head);
+/* file sorting functions (in sorters.c)*/
+file_node_t *sort_files_by_time(file_node_t *head);
+int compare_files_by_time(file_node_t *a, file_node_t *b);
+void swap_files(file_node_t *a, file_node_t *b);
 file_node_t *confirm_sorted_by_size(file_node_t *head);
+file_node_t *sort_file_list_by_size(file_node_t *head);
+
+/* directory sorting functions (in dir_sorters.c) */
+dir_node_t *sort_dir_list_by_size(dir_node_t *head);
+int compare_dirs_by_size(dir_node_t *a, dir_node_t *b);
+void swap_dirs(dir_node_t *a, dir_node_t *b);
+
 #endif /* HLS_HEADER */

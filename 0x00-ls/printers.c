@@ -112,14 +112,17 @@ int print_error_message(char *f)
  **/
 int print_dirs(dir_node_t **head, ls_config_t *flags, print_t printer)
 {
-	dir_node_t *tmp = *head;
+	dir_node_t *tmp;
 	int status = 0;
 
 	if (flags->reversed)
 		while (tmp->next)
 			tmp = tmp->next;
 
-	while (tmp)
+	if (flags->sort_by_size)
+		*head = sort_dir_list_by_size(*head);
+
+	for (tmp = *head; tmp; tmp = flags->reversed ? tmp->prev : tmp->next)
 	{
 		if (tmp->error_code)
 		{
@@ -134,12 +137,11 @@ int print_dirs(dir_node_t **head, ls_config_t *flags, print_t printer)
 			if (flags->sort_by_size)
 				tmp->list = sort_file_list_by_size(tmp->list);
 			if (flags->sort_by_time)
-				tmp->list = sort(tmp->list);
+				tmp->list = sort_files_by_time(tmp->list);
 			printer(tmp->list, flags);
 			if (flags->reversed ? tmp->prev : tmp->next)
 				putchar('\n');
 		}
-		tmp = flags->reversed ? tmp->prev : tmp->next;
 	}
 	return (status);
 }

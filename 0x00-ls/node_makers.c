@@ -16,9 +16,8 @@ int add_dir_node(char *dir_name, DIR *stream, dir_node_t **head)
 
 	new_node = malloc(sizeof(dir_node_t));
 	new_node->dir_name = duplicate_string(dir_name);
-	new_node->next = NULL;
-	new_node->prev = NULL;
-	new_node->error_code = stream ? 0 : error_code;
+	new_node->next = NULL, new_node->prev = NULL;
+	new_node->size = -1, new_node->error_code = stream ? 0 : error_code;
 	if (new_node->error_code == 0)
 	{
 		while ((read = readdir(stream)) != NULL)
@@ -39,15 +38,12 @@ int add_dir_node(char *dir_name, DIR *stream, dir_node_t **head)
 		new_node->prev = tmp->prev;
 		if (tmp->prev)
 			tmp->prev->next = new_node;
-		new_node->next = tmp;
-		tmp->prev = new_node;
+		new_node->next = tmp, tmp->prev = new_node;
 		if (tmp == *head)
 			*head = new_node;
 	}
 	else
-	{
 		new_node->prev->next = new_node;
-	}
 	return (new_node->error_code);
 }
 
@@ -136,8 +132,7 @@ void recurse_list(dir_node_t **head, dir_node_t *dir, ls_config_t *flags)
 		oth = dir->prev, dir->prev = add_subdirs(dir, flags);
 		if (dir->prev)
 		{
-			flags->print_dir_name = true;
-			dir->prev->next = dir;
+			flags->print_dir_name = true, dir->prev->next = dir;
 			for (alt = dir->prev; alt->prev; alt = alt->prev)
 				;
 			alt->prev = oth;
@@ -156,8 +151,7 @@ void recurse_list(dir_node_t **head, dir_node_t *dir, ls_config_t *flags)
 		oth = dir->next, dir->next = add_subdirs(dir, flags);
 		if (dir->next)
 		{
-			dir->next->prev = dir;
-			flags->print_dir_name = true;
+			flags->print_dir_name = true, dir->next->prev = dir;
 			for (alt = dir->next; alt->next; alt = alt->next)
 				;
 			alt->next = oth;
@@ -169,6 +163,8 @@ void recurse_list(dir_node_t **head, dir_node_t *dir, ls_config_t *flags)
 			dir->next = oth;
 		}
 	}
+	if (flags->sort_by_size)
+		*head = sort_dir_list_by_size(*head);
 }
 
 /**
@@ -188,6 +184,7 @@ dir_node_t *add_subdirs(dir_node_t *dir, ls_config_t *flags)
 			tmp = tmp->next;
 
 	for (; tmp; tmp = flags->reversed ? tmp->prev : tmp->next)
+	{
 		if (S_ISDIR(tmp->info->st_mode) && PRINT_CHECK(tmp->name))
 		{
 			dot = find_char(dir->dir_name, '.');
@@ -209,6 +206,7 @@ dir_node_t *add_subdirs(dir_node_t *dir, ls_config_t *flags)
 			}
 			prev = new, new = NULL;
 		}
+	}
 
 	if (flags->reversed && prev)
 		while (prev->next)
