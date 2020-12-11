@@ -45,7 +45,10 @@ char *return_line(reader_t *rd)
 	{
 		if (rd->num_bytes == i || rd->buf[i] == '\n')
 		{
-			rd->buf[i] = '\0';
+			if (rd->num_bytes != i)
+				rd->buf[i] = '\0';
+			else if (rd->buf[i] == '\0')
+				return (NULL);
 			line = malloc(sizeof(char) * (i - rd->i + 1));
 			_memcpy(line, rd->buf + rd->i, i - rd->i + 1);
 			rd->i = i + 1;
