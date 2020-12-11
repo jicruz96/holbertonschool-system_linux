@@ -184,7 +184,6 @@ dir_node_t *add_subdirs(dir_node_t *dir, ls_config_t *flags)
 			tmp = tmp->next;
 
 	for (; tmp; tmp = flags->reversed ? tmp->prev : tmp->next)
-	{
 		if (S_ISDIR(tmp->info->st_mode) && PRINT_CHECK(tmp->name))
 		{
 			dot = find_char(dir->dir_name, '.');
@@ -206,7 +205,6 @@ dir_node_t *add_subdirs(dir_node_t *dir, ls_config_t *flags)
 			}
 			prev = new, new = NULL;
 		}
-	}
 
 	if (flags->reversed && prev)
 		while (prev->next)
