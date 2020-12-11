@@ -42,7 +42,6 @@ char *return_line(reader_t *rd)
 		return (NULL);
 
 	for (i = rd->i; i < rd->num_bytes || rd->num_bytes != rd->buf_size; i++)
-	{
 		if (rd->num_bytes == i || rd->buf[i] == '\n')
 		{
 			if (rd->num_bytes != i)
@@ -54,7 +53,6 @@ char *return_line(reader_t *rd)
 			rd->i = i + 1;
 			return (line);
 		}
-	}
 
 	if (rd->i)
 		_memcpy(rd->buf, rd->buf + rd->i, len);
@@ -66,7 +64,6 @@ char *return_line(reader_t *rd)
 			return (NULL);
 	}
 	memset(rd->buf + len, '\0', rd->num_bytes - len);
-
 	rd->buf_size = READ_SIZE + len;
 	rd->i = 0;
 	rd->num_bytes = read(rd->fd, rd->buf + len, READ_SIZE);
@@ -76,7 +73,6 @@ char *return_line(reader_t *rd)
 		return (NULL);
 	}
 	rd->num_bytes += len;
-
 	return (return_line(rd));
 }
 
