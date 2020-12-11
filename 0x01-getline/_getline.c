@@ -40,7 +40,6 @@ char *return_line(reader_t *rd)
 
 	if (len < 0)
 		return (NULL);
-
 	for (i = rd->i; i < rd->num_bytes || rd->num_bytes != rd->buf_size; i++)
 		if (rd->num_bytes == i || rd->buf[i] == '\n')
 		{
@@ -53,15 +52,15 @@ char *return_line(reader_t *rd)
 			rd->i = i + 1;
 			return (line);
 		}
-
 	if (rd->i)
 		_memcpy(rd->buf, rd->buf + rd->i, len);
-
 	if (READ_SIZE + len > rd->buf_size)
 	{
-		rd->buf = realloc(rd->buf, READ_SIZE + len);
-		if (rd->buf == NULL)
+		line = malloc(READ_SIZE + len);
+		if (line == NULL)
 			return (NULL);
+		_memcpy(line, rd->buf, rd->buf_size);
+		free(rd->buf), rd->buf = line;
 	}
 	memset(rd->buf + len, '\0', rd->num_bytes - len);
 	rd->buf_size = READ_SIZE + len;
