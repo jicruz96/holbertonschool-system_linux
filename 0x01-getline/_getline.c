@@ -16,7 +16,11 @@ char *_getline(const int fd)
 
 	for (rd = readers; rd; rd = rd->next)
 		if (rd->fd == fd)
+		{
+			if (rd->bytes <= 0)
+				rd->bytes = read(fd, rd->buf, READ_SIZE);
 			return (return_line(rd));
+		}
 
 	rd = reader_init(fd);
 	if (rd == NULL)
@@ -33,42 +37,46 @@ char *_getline(const int fd)
  **/
 char *return_line(reader_t *rd)
 {
-	int i, len = rd->num_bytes - rd->i;
-	char *line;
+	int i, j, line_size = 0, bytes_copied = 0;
+	char *line = NULL, *tmp, *next, *end_of_line;
 
-	if (len < 0)
-		return (NULL);
-	for (i = rd->i; i < rd->num_bytes || rd->num_bytes != rd->buf_size; i++)
-		if (rd->num_bytes == i || rd->buf[i] == '\n')
+	for (; rd->bytes > 0; rd->bytes = read(rd->fd, rd->buf, READ_SIZE))
+	{
+		if (line_size < bytes_copied + rd->bytes + 1)
 		{
-			if (rd->num_bytes == i && !rd->buf[i])
+			line_size += rd->bytes + 1, tmp = malloc(sizeof(char) * line_size);
+			if (tmp == NULL)
+			{
+				free(line);
 				return (NULL);
-			if (rd->num_bytes != i)
-				rd->buf[i] = '\0';
-			line = malloc(sizeof(char) * (i - rd->i + 1));
-			_memcpy(line, rd->buf + rd->i, i - rd->i + 1);
-			rd->i = i + 1;
-			return (line);
+			}
+			_memcpy(tmp, line, bytes_copied);
+			memset(tmp + bytes_copied, '\0', line_size - bytes_copied);
+			free(line), line = tmp;
 		}
-	if (rd->i)
-		_memcpy(rd->buf, rd->buf + rd->i, len);
-	if (READ_SIZE + len > rd->buf_size)
-	{
-		line = malloc(READ_SIZE + len);
-		if (line == NULL)
-			return (NULL);
-		_memcpy(line, rd->buf, rd->buf_size);
-		free(rd->buf), rd->buf = line, rd->buf_size = READ_SIZE + len;
+		for (i = 0; i < rd->bytes; i++)
+			if (rd->buf[i] == '\n')
+			{
+				rd->buf[i++] = '\0', rd->bytes -= i;
+				next = rd->buf + i, end_of_line = line + bytes_copied;
+				for (j = 0; j < i; j++, bytes_copied++)
+				{
+					end_of_line[j] = rd->buf[j];
+					if (i + j < READ_SIZE)
+						rd->buf[j] = next[j], next[j] = '\0';
+				}
+				while (j < rd->bytes && (i + j) < READ_SIZE)
+				{
+					rd->buf[j] = next[j];
+					next[j] = '\0';
+					j += 1;
+				}
+				return (line);
+			}
+		_memcpy(line + bytes_copied, rd->buf, rd->bytes);
+		bytes_copied += rd->bytes;
 	}
-	memset(rd->buf + len, '\0', rd->num_bytes - len);
-	rd->i = 0;
-	rd->num_bytes = read(rd->fd, rd->buf + len, READ_SIZE) + len;
-	if (rd->num_bytes + 1 == len)
-	{
-		rd->num_bytes = len;
-		return (NULL);
-	}
-	return (return_line(rd));
+	return (line);
 }
 
 /**
@@ -83,12 +91,11 @@ char *return_line(reader_t *rd)
 reader_t *reader_init(int fd)
 {
 	reader_t *new;
+	ssize_t bytes_read;
 	char *bytes = malloc(sizeof(char) * READ_SIZE);
-	ssize_t res;
 
-	memset(bytes, '\0', READ_SIZE);
-	res = read(fd, bytes, READ_SIZE);
-	if (res <= 0)
+	bytes_read = read(fd, bytes, READ_SIZE);
+	if (bytes_read <= 0)
 	{
 		free(bytes);
 		return (NULL);
@@ -96,7 +103,7 @@ reader_t *reader_init(int fd)
 	new = malloc(sizeof(reader_t));
 	new->fd = fd;
 	new->buf = bytes;
-	new->num_bytes = res;
+	new->bytes = bytes_read;
 	new->i = 0;
 	new->next = NULL;
 	new->buf_size = READ_SIZE;
