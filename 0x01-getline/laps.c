@@ -17,12 +17,16 @@ void race_state(int *id, size_t size)
 	car_t *tmp, *new, *prev;
 	unsigned int i;
 
+
 	/* if size is 0, free everything */
 	if (size == 0)
 	{
 		free_car_list(&cars);
 		return;
 	}
+
+	if (!id)
+		return;
 
 	/* Loop through ids. If id in list, increment laps. Else, add to list */
 	for (i = 0; i < size; i++)
