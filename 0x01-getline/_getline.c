@@ -58,18 +58,16 @@ char *return_line(reader_t *rd)
 		if (line == NULL)
 			return (NULL);
 		_memcpy(line, rd->buf, rd->buf_size);
-		free(rd->buf), rd->buf = line;
+		free(rd->buf), rd->buf = line, rd->buf_size = READ_SIZE + len;
 	}
 	memset(rd->buf + len, '\0', rd->num_bytes - len);
-	rd->buf_size = READ_SIZE + len;
 	rd->i = 0;
-	rd->num_bytes = read(rd->fd, rd->buf + len, READ_SIZE);
-	if (rd->num_bytes == -1)
+	rd->num_bytes = read(rd->fd, rd->buf + len, READ_SIZE) + len;
+	if (rd->num_bytes + 1 == len)
 	{
 		rd->num_bytes = len;
 		return (NULL);
 	}
-	rd->num_bytes += len;
 	return (return_line(rd));
 }
 
