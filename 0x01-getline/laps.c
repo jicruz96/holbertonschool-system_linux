@@ -17,7 +17,6 @@ void race_state(int *id, size_t size)
 	car_t *tmp, *new, *prev;
 	unsigned int i;
 
-
 	/* if size is 0, free everything */
 	if (size == 0)
 	{
@@ -80,7 +79,7 @@ void free_car_list(car_t **cars)
 {
 	car_t *prev, *tmp;
 
-	if (!cars)
+	if (!cars || !(*cars))
 		return;
 
 	prev = *cars;
