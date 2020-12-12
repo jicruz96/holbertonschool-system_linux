@@ -1,3 +1,4 @@
+
 #include "_getline.h"
 
 /**
@@ -19,7 +20,7 @@ char *_getline(const int fd)
 		{
 			if (rd->bytes <= 0)
 				rd->bytes = read(fd, rd->buf, READ_SIZE);
-			return (return_line(rd));
+			return (find_line(rd));
 		}
 
 	rd = reader_init(fd);
@@ -27,20 +28,20 @@ char *_getline(const int fd)
 		return (NULL);
 	rd->next = readers;
 	readers = rd;
-	return (return_line(rd));
+	return (find_line(rd));
 }
 
 /**
- * return_line - parses buffer, finds end of line, adjusts buffer, returns line
+ * find_line - parses buffer, finds end of line, adjusts buffer, returns line
  * @rd: pointer to reader
  * Return: pointer to line (must be freed by user)
  **/
-char *return_line(reader_t *rd)
+char *find_line(reader_t *rd)
 {
-	int i, j, line_size = 0, bytes_copied = 0;
-	char *line = NULL, *tmp, *next, *end_of_line;
+	int i, line_size = 0, bytes_copied = 0;
+	char *line = NULL, *tmp;
 
-	for (; rd->bytes > 0; rd->bytes = read(rd->fd, rd->buf, READ_SIZE))
+	while (rd->bytes > 0)
 	{
 		if (line_size < bytes_copied + rd->bytes + 1)
 		{
@@ -54,28 +55,54 @@ char *return_line(reader_t *rd)
 			memset(tmp + bytes_copied, '\0', line_size - bytes_copied);
 			free(line), line = tmp;
 		}
+
 		for (i = 0; i < rd->bytes; i++)
+		{
 			if (rd->buf[i] == '\n')
 			{
-				rd->buf[i++] = '\0', rd->bytes -= i;
-				next = rd->buf + i, end_of_line = line + bytes_copied;
-				for (j = 0; j < i; j++, bytes_copied++)
-				{
-					end_of_line[j] = rd->buf[j];
-					if (i + j < READ_SIZE)
-						rd->buf[j] = next[j], next[j] = '\0';
-				}
-				while (j < rd->bytes && (i + j) < READ_SIZE)
-				{
-					rd->buf[j] = next[j];
-					next[j] = '\0';
-					j += 1;
-				}
-				return (line);
+				rd->buf[i++] = '\0';
+				rd->bytes -= i;
+				return (return_line(line, rd, i, bytes_copied));
 			}
+		}
+
 		_memcpy(line + bytes_copied, rd->buf, rd->bytes);
 		bytes_copied += rd->bytes;
+		rd->bytes = read(rd->fd, rd->buf, READ_SIZE);
 	}
+
+	return (line);
+}
+
+/**
+ * return_line - merges two buffers, erases unneeded memory, returns buffer
+ * @line: line buffer
+ * @reader: reader node with buffer with extra chars and remaining byte count
+ * @buf_len: size of reader's buffer stuff
+ * @offset: what index of line to start copying extra into
+ * Return: line
+ **/
+char *return_line(char *line, reader_t *reader, int buf_len, int offset)
+{
+	int i;
+	char *next = reader->buf + buf_len;
+	char *line_end = line + offset;
+
+	for (i = 0; i < buf_len; i++)
+	{
+		line_end[i] = reader->buf[i];
+		if (i + buf_len < READ_SIZE)
+		{
+			reader->buf[i] = next[i];
+			next[i] = '\0';
+		}
+	}
+	for (; i < reader->bytes && (i + buf_len) < READ_SIZE; i++)
+	{
+		reader->buf[i] = next[i];
+		next[i] = '\0';
+	}
+
 	return (line);
 }
 

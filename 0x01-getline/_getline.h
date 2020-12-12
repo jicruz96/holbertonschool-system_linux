@@ -6,7 +6,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define READ_SIZE 1024
+#define READ_SIZE 10
 
 /**
  * struct reader_s -    associates a file descriptor to its file's contents.
@@ -30,9 +30,10 @@ typedef struct reader_s
 } reader_t;
 
 char *_getline(const int fd);
+char *return_line(char *line, reader_t *reader, int buf_len, int offset);
 char *free_readers(reader_t **readers);
 char *_memcpy(char *dest, char *src, size_t size);
 reader_t *reader_init(int fd);
-char *return_line(reader_t *rd);
+char *find_line(reader_t *rd);
 
 #endif /* GETLINE_H */
