@@ -9,22 +9,20 @@
 char *_getline(const int fd)
 {
 	static reader_t *readers;
-	reader_t *rd, *prev;
+	reader_t *rd;
 
 	if (fd == -1)
 		return (free_readers(&readers));
 
-	for (prev = NULL, rd = readers; rd; prev = rd, rd = rd->next)
+	for (rd = readers; rd; rd = rd->next)
 		if (rd->fd == fd)
 			return (return_line(rd));
 
 	rd = reader_init(fd);
 	if (rd == NULL)
 		return (NULL);
-	if (prev)
-		prev->next = rd;
-	else
-		readers = rd;
+	rd->next = readers;
+	readers = rd;
 	return (return_line(rd));
 }
 
@@ -35,18 +33,18 @@ char *_getline(const int fd)
  **/
 char *return_line(reader_t *rd)
 {
-	char *line;
 	int i, len = rd->num_bytes - rd->i;
+	char *line;
 
 	if (len < 0)
 		return (NULL);
 	for (i = rd->i; i < rd->num_bytes || rd->num_bytes != rd->buf_size; i++)
 		if (rd->num_bytes == i || rd->buf[i] == '\n')
 		{
+			if (rd->num_bytes == i && !rd->buf[i])
+				return (NULL);
 			if (rd->num_bytes != i)
 				rd->buf[i] = '\0';
-			else if (rd->buf[i] == '\0')
-				return (NULL);
 			line = malloc(sizeof(char) * (i - rd->i + 1));
 			_memcpy(line, rd->buf + rd->i, i - rd->i + 1);
 			rd->i = i + 1;
