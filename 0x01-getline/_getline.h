@@ -13,7 +13,7 @@
  *                      The i allows the struct to track what's been read.
  * @fd:			file descriptor
  * @buf:		file's text
- * @num_bytes:	number of bytes copied into buffer (needed to differentiate
+ * @bytes:	number of bytes copied into buffer (needed to differentiate
  *				between copied null bytes and null bytes from initialization)
  * @buf_size:	size of buffer allocated to memory
  * @i:			index where _getline left off reading the buffer
@@ -23,7 +23,7 @@ typedef struct reader_s
 {
 	int fd;
 	char *buf;
-	int num_bytes;
+	int bytes;
 	int buf_size;
 	int i;
 	struct reader_s *next;
