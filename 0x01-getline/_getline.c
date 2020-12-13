@@ -51,7 +51,7 @@ char *find_line(reader_t *rd)
 				free(line);
 				return (NULL);
 			}
-			_memcpy(tmp, line, bytes_copied);
+			memcpy(tmp, line, bytes_copied);
 			memset(tmp + bytes_copied, '\0', line_size - bytes_copied);
 			free(line), line = tmp;
 		}
@@ -66,7 +66,7 @@ char *find_line(reader_t *rd)
 			}
 		}
 
-		_memcpy(line + bytes_copied, rd->buf, rd->bytes);
+		memcpy(line + bytes_copied, rd->buf, rd->bytes);
 		bytes_copied += rd->bytes;
 		rd->bytes = read(rd->fd, rd->buf, READ_SIZE);
 	}
@@ -131,9 +131,7 @@ reader_t *reader_init(int fd)
 	new->fd = fd;
 	new->buf = bytes;
 	new->bytes = bytes_read;
-	new->i = 0;
 	new->next = NULL;
-	new->buf_size = READ_SIZE;
 	return (new);
 }
 
@@ -157,23 +155,4 @@ char *free_readers(reader_t **readers)
 	}
 	*readers = NULL;
 	return (NULL);
-}
-
-/**
- * _memcpy - custom memcpy. Normal memcpy raises an error if the two
- *			 pointer areas overlap. This one does not.
- *
- * @dest: pointer to buffer where memory will be copies
- * @src: source of content to be copied
- * @size: number of bytes to copy over
- * Return: pointer to dest
- **/
-char *_memcpy(char *dest, char *src, size_t size)
-{
-	unsigned int i;
-
-	for (i = 0; i < size; i++)
-		dest[i] = src[i];
-
-	return (dest);
 }
