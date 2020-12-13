@@ -11,6 +11,8 @@ char *_getline(const int fd)
 {
 	static reader_t *readers;
 	reader_t *rd;
+	char *bytes;
+	int bytes_read;
 
 	if (fd == -1)
 		return (free_readers(&readers));
@@ -23,9 +25,19 @@ char *_getline(const int fd)
 			return (find_line(rd));
 		}
 
-	rd = reader_init(fd);
+	bytes = malloc(sizeof(char) * READ_SIZE);
+	bytes_read = read(fd, bytes, READ_SIZE);
+	if (bytes_read <= 0)
+	{
+		free(bytes);
+		return (NULL);
+	}
+	rd = malloc(sizeof(reader_t));
 	if (rd == NULL)
 		return (NULL);
+	rd->fd = fd;
+	rd->buf = bytes;
+	rd->bytes = bytes_read;
 	rd->next = readers;
 	readers = rd;
 	return (find_line(rd));
