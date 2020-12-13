@@ -86,6 +86,8 @@ char *find_line(reader_t *rd)
 						(line + bytes_copied)[j] = rd->buf[j];
 					if (i + j < READ_SIZE)
 						rd->buf[j] = (rd->buf + i)[j], (rd->buf + i)[j] = '\0';
+					else
+						rd->buf[j] = '\0';
 				}
 				return (line);
 			}
