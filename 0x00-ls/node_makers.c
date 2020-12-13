@@ -177,18 +177,15 @@ dir_node_t *add_subdirs(dir_node_t *dir, ls_config_t *flags)
 {
 	file_node_t *tmp = dir->list;
 	dir_node_t *new = NULL, *prev = NULL;
-	char *dot, path[512];
+	char *d, path[512];
 
 	if (flags->reversed)
 		while (tmp->next)
 			tmp = tmp->next;
 
 	for (; tmp; tmp = flags->reversed ? tmp->prev : tmp->next)
-		if (S_ISDIR(tmp->info->st_mode) && PRINT_CHECK(tmp->name))
+		if (approve_open_dir(tmp))
 		{
-			dot = find_char(dir->dir_name, '.');
-			if (dot && (!*(dot + 1) || *(dot + 1) == '.'))
-				continue;
 			sprintf(path, "%s/%s", dir->dir_name, tmp->name);
 			add_dir_node(path, opendir(path), &new);
 			if (flags->reversed)

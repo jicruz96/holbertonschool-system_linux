@@ -128,6 +128,7 @@ void recurse_list(dir_node_t **head, dir_node_t *dir, ls_config_t *flags);
 int add_dir_node(char *name, DIR *stream, dir_node_t **head);
 int add_file_node(char *file_name, char *dir_name, file_node_t **head);
 file_node_t *file_node_init(char *name, char *dir_name, struct stat *info);
+bool approve_open_dir(file_node_t *dir, ls_config_t *flags);
 
 /* Alphabetization logic (in which_goes_first.c) */
 char *which_goes_first(char *s1, char *s2);
