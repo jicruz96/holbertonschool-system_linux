@@ -126,6 +126,7 @@ int print_dirs(dir_node_t **head, ls_config_t *flags, print_t printer)
 	{
 		if (tmp->error_code)
 		{
+			errno = tmp->error_code;
 			status = print_error_message(tmp->dir_name);
 		}
 		else
