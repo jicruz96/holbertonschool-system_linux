@@ -20,8 +20,8 @@ bool approve_open_dir(file_node_t *dir, ls_config_t *flags)
 		if (flags->dot == false && flags->dot_alt == false)
 			return (false);
 	}
-	d = tmp->name + len(tmp->name) - 1;
-	if (d - 2 >= tmp->name && (IS_CWD(d) || IS_PARENT_DIR((d - 1))))
+	d = dir->name + len(dir->name) - 1;
+	if (d - 2 >= dir->name && (IS_CWD(d) || IS_PARENT_DIR((d - 1))))
 		return (false);
 
 	return (true);
