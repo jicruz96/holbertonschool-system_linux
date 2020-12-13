@@ -80,15 +80,11 @@ char *find_line(reader_t *rd)
 			if (rd->buf[i] == '\n')
 			{
 				rd->buf[i++] = '\0', rd->bytes -= i;
-				for (j = 0; j < rd->bytes; j++)
-				{
-					if (j < i)
-						(line + bytes_copied)[j] = rd->buf[j];
-					if (i + j < READ_SIZE)
-						rd->buf[j] = (rd->buf + i)[j], (rd->buf + i)[j] = '\0';
-					else
-						rd->buf[j] = '\0';
-				}
+				memcpy(line + bytes_copied, rd->buf, i);
+				for (j = 0; i < READ_SIZE; j++, i++)
+					rd->buf[j] = rd->buf[i];
+				for (; j < READ_SIZE; j++)
+					rd->buf[j] = '\0';
 				return (line);
 			}
 
