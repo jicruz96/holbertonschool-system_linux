@@ -58,7 +58,7 @@ char *_getline(const int fd)
  **/
 char *find_line(reader_t *rd)
 {
-	int i, line_size = 0, bytes_copied = 0;
+	int i, j, line_size = 0, bytes_copied = 0;
 	char *line = NULL, *tmp;
 
 	while (rd->bytes > 0)
@@ -77,14 +77,19 @@ char *find_line(reader_t *rd)
 		}
 
 		for (i = 0; i < rd->bytes; i++)
-		{
 			if (rd->buf[i] == '\n')
 			{
-				rd->buf[i++] = '\0';
-				rd->bytes -= i;
-				return (return_line(line, rd, i, bytes_copied));
+				rd->buf[i++] = '\0', rd->bytes -= i;
+				for (j = 0; j < i; j++)
+				{
+					(line + bytes_copied)[j] = rd->buf[j];
+					if (i + j < READ_SIZE)
+						rd->buf[j] = (rd->buf + i)[j], (rd->buf + i)[j] = '\0';
+				}
+				for (; j < rd->bytes && (i + j) < READ_SIZE; j++)
+					rd->buf[j] = (rd->buf + i)[j], (rd->buf + i)[j] = '\0';
+				return (line);
 			}
-		}
 
 		memcpy(line + bytes_copied, rd->buf, rd->bytes);
 		bytes_copied += rd->bytes;
