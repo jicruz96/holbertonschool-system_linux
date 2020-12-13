@@ -15,7 +15,15 @@ char *_getline(const int fd)
 	int bytes_read;
 
 	if (fd == -1)
-		return (free_readers(&readers));
+	{
+		for (rd = readers; rd; rd = readers)
+		{
+			readers = rd->next;
+			free(rd->buf);
+			free(rd);
+		}
+		return (NULL);
+	}
 
 	for (rd = readers; rd; rd = rd->next)
 		if (rd->fd == fd)
@@ -116,55 +124,4 @@ char *return_line(char *line, reader_t *reader, int buf_len, int offset)
 	}
 
 	return (line);
-}
-
-/**
- * reader_init - initializes new "reader" node. The reader associates a file
- *				 descriptor to a buffer. _getline uses this buffer to parse
- *				 through the lines of the file and read more file contents
- *				 when necessary.
- *
- * @fd: file descriptor
- * Return: pointer to new node
- **/
-reader_t *reader_init(int fd)
-{
-	reader_t *new;
-	ssize_t bytes_read;
-	char *bytes = malloc(sizeof(char) * READ_SIZE);
-
-	bytes_read = read(fd, bytes, READ_SIZE);
-	if (bytes_read <= 0)
-	{
-		free(bytes);
-		return (NULL);
-	}
-	new = malloc(sizeof(reader_t));
-	new->fd = fd;
-	new->buf = bytes;
-	new->bytes = bytes_read;
-	new->next = NULL;
-	return (new);
-}
-
-/**
- * free_readers - frees all reader nodes and node contents
- * @readers: pointer to head of linked list of readers
- * Return: NULL, always, which _getline immediately returns
- **/
-char *free_readers(reader_t **readers)
-{
-	reader_t *curr, *tmp;
-
-	if (!readers || !(*readers))
-		return (NULL);
-
-	for (curr = *readers; curr; curr = tmp)
-	{
-		tmp = curr->next;
-		free(curr->buf);
-		free(curr);
-	}
-	*readers = NULL;
-	return (NULL);
 }
