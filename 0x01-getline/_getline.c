@@ -80,11 +80,12 @@ char *find_line(reader_t *rd)
 			if (rd->buf[i] == '\n')
 			{
 				rd->buf[i++] = '\0', rd->bytes -= i;
-				for (j = 0; j < rd->bytes && (i + j) < READ_SIZE; j++)
+				for (j = 0; j < rd->bytes; j++)
 				{
 					if (j < i)
 						(line + bytes_copied)[j] = rd->buf[j];
-					rd->buf[j] = (rd->buf + i)[j], (rd->buf + i)[j] = '\0';
+					if (i + j < READ_SIZE)
+						rd->buf[j] = (rd->buf + i)[j], (rd->buf + i)[j] = '\0';
 				}
 				return (line);
 			}
