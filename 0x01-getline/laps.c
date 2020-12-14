@@ -11,8 +11,11 @@ void race_state(int *id, size_t size)
 	car_t *next, *prev, *new;
 
 	if (size == 0) /* if size is 0, reset cars list */
+	{
 		for (; cars; cars = next)
 			next = cars->next, free(cars);
+		return;
+	}
 
 	for (; size--; id++) /* Loop through all ids */
 	{
@@ -41,8 +44,7 @@ void race_state(int *id, size_t size)
 		}
 	}
 
-	/* Print list */
 	printf("Race state:\n");
-	for (next = cars; next; next = next->next)
+	for (next = cars; next; next = next->next) /* Print list */
 		printf("Car %d [%d laps]\n", next->id, next->laps);
 }
