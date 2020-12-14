@@ -1,11 +1,5 @@
 #include "laps.h"
 
-	/**
-	 * NOTE: This file is irrelevant to the rest of the project. It's a program
-	 * written for a school exercise to help us learn the basics about how to
-	 * use static variables
-	 **/
-
 /**
  * race_state - keeps track of laps made by several cars in a race
  * @id: array of ints representing the id for each car in the race
@@ -14,81 +8,43 @@
 void race_state(int *id, size_t size)
 {
 	static car_t *cars;
-	car_t *tmp, *new, *prev;
-	unsigned int i;
+	car_t *next, *prev, *new;
 
-	/* if size is 0, free everything */
+	/* if size is 0, reset the cars list */
 	if (size == 0)
-	{
-		free_car_list(&cars);
-		return;
-	}
+		for (; cars; cars = next)
+			next = cars->next, free(cars);
 
-	if (!id)
-		return;
-
-	/* Loop through ids. If id in list, increment laps. Else, add to list */
-	for (i = 0; i < size; i++)
+	/* Loop through all ids */
+	for (; size--; id++)
 	{
-		for (prev = NULL, tmp = cars; tmp && id[i] > tmp->id; tmp = tmp->next)
-			prev = tmp;
-		if (tmp && id[i] == tmp->id)
-		{
-			tmp->laps += 1;
-		}
-		else
+		/* For each id, stop when *id >= current node or list is done */
+		for (prev = NULL, next = cars; next; prev = next, next = next->next)
+			if (*id > next->id)
+				break;
+
+		if (next == NULL) /* If id not found in list, add new car to list */
 		{
 			printf("Car %d joined the race\n", id[i]);
-			new = car_init(id[i], tmp);
+			new = malloc(sizeof(car_t));
+			if (!new)
+				return (NULL);
+			new->id = *id;
+			new->laps = 0;
+			new->next = next;
 			if (prev)
 				prev->next = new;
 			else
 				cars = new;
 		}
+		else /* else, id was found, increment laps */
+		{
+			next->laps += 1;
+		}
 	}
 
 	/* Print list */
 	printf("Race state:\n");
-	for (tmp = cars; tmp; tmp = tmp->next)
-		printf("Car %d [%d laps]\n", tmp->id, tmp->laps);
-}
-
-/**
- * car_init - initialize a new car node
- * @id: id of new car
- * @next: next car node in the car list
- * Return: pointer to new car node
- **/
-car_t *car_init(int id, car_t *next)
-{
-	car_t *new = malloc(sizeof(car_t));
-
-	if (!new)
-		return (NULL);
-	new->id = id;
-	new->laps = 0;
-	new->next = next;
-	return (new);
-}
-
-/**
- * free_car_list - frees all nodes in a car list
- * @cars: head of car list
- **/
-void free_car_list(car_t **cars)
-{
-	car_t *prev, *tmp;
-
-	if (!cars || !(*cars))
-		return;
-
-	prev = *cars;
-
-	for (tmp = (*cars)->next; tmp; tmp = tmp->next)
-	{
-		free(prev);
-		prev = tmp;
-	}
-	free(prev);
-	*cars = NULL;
+	for (next = cars; next; next = next->next)
+		printf("Car %d [%d laps]\n", next->id, next->laps);
 }
