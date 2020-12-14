@@ -25,7 +25,8 @@ We were only allowed to use the folllowing C Standard Library functions and syst
 | `void exit(int status)`     | <div align="center">**Terminate program with status number**</div> |
 | `void free(void *ptr)`     | <div align="center">**Free allocated memory pointed to by pointer**</div> |
 | `void *malloc(size_t size)`   | <div align="center">**Allocate `size` bytes of dynamic memory**</div> |
-| `void *memset(void *buf, int c, size_t size)` | <div align="center">**Set `size` bytes of `buf` to the value `c`**</div> |
+| `void *memset(void *buf, int c, int n)` | <div align="center">**Set `n` bytes of `buf` to the value `c`**</div> |
+| `void memcpy(void *dest, void *src, int n)` | <div align="center">**Copy `n` bytes of `src` over to `dest`**</div> |
 
 We were also allowed to use the following functions, but I either didn't use them or chose to rewrite them from scratch:
 
