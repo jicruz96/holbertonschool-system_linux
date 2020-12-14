@@ -163,8 +163,6 @@ void recurse_list(dir_node_t **head, dir_node_t *dir, ls_config_t *flags)
 			dir->next = oth;
 		}
 	}
-	if (flags->sort_by_size)
-		*head = sort_dir_list_by_size(*head);
 }
 
 /**
@@ -209,6 +207,9 @@ dir_node_t *add_subdirs(dir_node_t *dir, ls_config_t *flags)
 	else if (prev)
 		while (prev->prev)
 			prev = prev->prev;
+
+	if (flags->sort_by_size)
+		prev = sort_dir_list_by_size(prev);
 
 	return (prev);
 }

@@ -112,17 +112,17 @@ int print_error_message(char *f)
  **/
 int print_dirs(dir_node_t **head, ls_config_t *flags, print_t printer)
 {
-	dir_node_t *tmp;
+	dir_node_t *tmp = *head;
 	int status = 0;
+
+	if (flags->sort_by_size)
+		*head = sort_dir_list_by_size(*head);
 
 	if (flags->reversed)
 		while (tmp->next)
 			tmp = tmp->next;
 
-	if (flags->sort_by_size)
-		*head = sort_dir_list_by_size(*head);
-
-	for (tmp = *head; tmp; tmp = flags->reversed ? tmp->prev : tmp->next)
+	for (; tmp; tmp = flags->reversed ? tmp->prev : tmp->next)
 	{
 		if (tmp->error_code)
 		{
