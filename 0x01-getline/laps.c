@@ -25,10 +25,10 @@ void race_state(int *id, size_t size)
 
 		if (next == NULL) /* If id not found in list, add new car to list */
 		{
-			printf("Car %d joined the race\n", id[i]);
+			printf("Car %d joined the race\n", *id);
 			new = malloc(sizeof(car_t));
 			if (!new)
-				return (NULL);
+				return;
 			new->id = *id;
 			new->laps = 0;
 			new->next = next;
