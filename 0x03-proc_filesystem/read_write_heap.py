@@ -11,17 +11,17 @@ from re import findall
 from sys import argv, stdout
 
 
-def find_target_location(bytes, target):
+def find_target_location(buffer, target):
     """ finds and returns buffer index where target first appears in buffer
 
     Args:
-        * bytes (bytes): bytes buffer
-        * target (str) : target string
+        * buffer (bytes): bytes buffer
+        * target (str)  : target string
     """
 
-    for i in range(len(bytes) - len(target) + 1):
+    for i in range(len(buffer) - len(target) + 1):
         j = 0
-        while j < len(target) and int(bytes[i + j]) == ord(target[j]):
+        while j < len(target) and int(buffer[i + j]) == ord(target[j]):
             j += 1
         if j == len(target):
             return i
@@ -74,11 +74,11 @@ def read_write_heap(pid, target, replacement):
             # go to starting address
             mem_file.seek(start)
 
-            # read bytes
-            bytes = mem_file.read(end - start)
+            # read memory segment
+            buffer = mem_file.read(end - start)
 
             # find location of target string
-            target_location = find_target_location(bytes, target)
+            target_location = find_target_location(buffer, target)
 
             if target_location:  # if we found a target
 
@@ -86,7 +86,8 @@ def read_write_heap(pid, target, replacement):
                 mem_file.seek(start + target_location)
 
                 # overwrite target with replacement
-                mem_file.write(replacement)
+                difference = max(len(target) - len(replacement), 0)
+                mem_file.write(replacement + bytes(difference))
 
     mem_file.close()
 
