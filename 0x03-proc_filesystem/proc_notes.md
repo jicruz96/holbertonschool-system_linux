@@ -1,27 +1,19 @@
-# The Linux `/proc` folder
+# `/proc` notes
 
-## Contents
-
-1. [The Gist](#the-gist)
-2. [/proc/PID/mem](#/proc/mem)
-## The Gist
-
-_(basically wikipedia cliff notes)_
-
-### What is `/proc`?
+## What is `/proc`?
 
 It's a special filesystem in Unix-like OS's that presents process information.
 
-### What's it for?
+## What's it for?
 
 * Acts as an interface to internal data structures in the kernal.
 * Can be used to obtain information about the system and to change certain kernel parameters at runtime.
 
-### Why use it?
+## Why use it?
 
 You can access key information about the system and your processes without using any specialized system calls.
 
-### What's inside `/proc`?
+## What's inside `/proc`?
 
 Linux `/proc` has two types of items:
 * process folders
@@ -29,7 +21,7 @@ Linux `/proc` has two types of items:
 
 Below is a brief explainer for both.
 
-### What's inside a `/proc` process folder?
+## What's inside a `/proc` process folder?
 
 Each running process will have its own proc folder. The folder name is the
 process's process ID. This process folder contains the following "files":
@@ -47,7 +39,7 @@ process's process ID. This process folder contains the following "files":
 `./PID/status` | info such as run state and memory usage |
 `./PID/task`   | *directory* containing *hard* links to any tasks started by process |
 
-### What non-process-related info is in `/proc`?
+## What non-process-related info is in `/proc`?
 
 There are _tons and tons_ of other files and folders in the `/proc` folder that provide non-process-related information, although in the 2.6 Linux kernel much of that information moved to a separate pseudo-file system, `sysfs`, mounted under `/sys`.
 
