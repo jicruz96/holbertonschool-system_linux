@@ -14,5 +14,5 @@ $(1)-$(FILENAME): $(1)-$(SRC:.c=.o) $(HLP:.c=.o)
 	$(CC) $(CFLAGS) $(1)-$(SRC) $(HLP) -o $(1)-$(FILENAME)
 
 2 = 2
-$(2)-$(FILENAME): $(2)-$(SRC:.c=.o) $(HLP:.c=.o)
-	$(CC) $(CFLAGS) $(2)-$(SRC) $(HLP) -o $(2)-$(FILENAME)
+$(2)-$(FILENAME): $(2)-$(SRC:.c=.o) $(HLP:.c=.o) 2-hreadelf_helpers.o
+	$(CC) $(CFLAGS) $(2)-$(SRC) $(HLP) -o $(2)-$(FILENAME) 2-hreadelf_helpers.c
