@@ -10,7 +10,7 @@ void print_ELF_file_type(uint16_t e_type)
 		{ET_NONE, "NONE (Unknown type)"},
 		{ET_REL, "REL (Relocatable file)"},
 		{ET_EXEC, "EXEC (Executable file)"},
-		{ET_DYN, "DYN (Shared object)"},
+		{ET_DYN, "DYN (Shared object file)"},
 		{ET_CORE, "CORE (Core file)"}
 	};
 	unsigned int i;
@@ -23,5 +23,7 @@ void print_ELF_file_type(uint16_t e_type)
 			return;
 		}
 	}
+
+	printf("<unknown: %u %x>\n", e_type, e_type);
 
 }

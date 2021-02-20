@@ -12,6 +12,8 @@
 #define PH_INTRO "Program Headers:"
 #define PH_FIRST_ROW \
 "  Type           Offset   VirtAddr           PhysAddr           FileSiz  MemSiz   Flg Align"
+#define PH_FIRST_ROW32 \
+"  Type           Offset   VirtAddr   PhysAddr   FileSiz MemSiz  Flg Align"
 #define IS_INTERP_ROW 1
 
 
@@ -45,11 +47,12 @@ void print_p_flags(uint32_t p_flags);
 int print_p_type(uint32_t p_type);
 void print_ELF_file_type(uint16_t e_type);
 
-void print_row(char *column1);
 void print_os_abi(unsigned char os_abi);
 void print_machine(uint16_t e_machine);
 
 char *get_string_table(int ELF_fd, int offset);
+char *get_string_table32(int ELF_fd, int offset);
+
 
 unsigned char open_ELF_file(int *ELF_fd, char *ELF_name, char *program);
 

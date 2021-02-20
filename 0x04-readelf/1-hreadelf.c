@@ -5,6 +5,8 @@
 #define SH_INTRO "Section Headers:"
 #define SH_FIRST_ROW \
 "  [Nr] Name              Type            Address          Off    Size   ES Flg Lk Inf Al"
+#define SH_FIRST_ROW32 \
+"  [Nr] Name              Type            Addr     Off    Size   ES Flg Lk Inf Al"
 
 /**
  * main - replica of readelf -W -h <file>, where <file> is argv[1]
@@ -14,14 +16,14 @@
  **/
 int main(int argc, char *argv[])
 {
-	int elf_file;
+	int ELF_fd;
 
 	if (argc > 1)
 	{
-		if (open_ELF_file(&elf_file, argv[1], "readelf") == ELFCLASS64)
-			print_elf64_section_header_table(elf_file);
+		if (open_ELF_file(&ELF_fd, argv[1], "readelf") == ELFCLASS64)
+			print_elf64_section_header_table(ELF_fd);
 		else
-			print_elf32_section_header_table(elf_file);
+			print_elf32_section_header_table(ELF_fd);
 	}
 
 	return (EXIT_SUCCESS);
@@ -30,9 +32,9 @@ int main(int argc, char *argv[])
 
 /**
  * print_elf64_section_header_table - prints ELF64 section header table
- * @elf_file: ELF file descriptor
+ * @ELF_fd: ELF file descriptor
  **/
-void print_elf64_section_header_table(int elf_file)
+void print_elf64_section_header_table(int ELF_fd)
 {
 	Elf64_Ehdr h;
 	Elf64_Shdr sh;
@@ -46,16 +48,16 @@ void print_elf64_section_header_table(int elf_file)
 	};
 
 	/* Read ELF header */
-	read(elf_file, &h, sizeof(h));
-	st = get_string_table(elf_file, h.e_shoff + (h.e_shentsize * h.e_shstrndx));
+	read(ELF_fd, &h, sizeof(h));
+	st = get_string_table(ELF_fd, h.e_shoff + (h.e_shentsize * h.e_shstrndx));
 
 	printf(SH_SUMMARY, h.e_shnum, (unsigned int)h.e_shoff);
 	puts(SH_INTRO);
 	puts(SH_FIRST_ROW);
-	lseek(elf_file, h.e_shoff, 0);
+	lseek(ELF_fd, h.e_shoff, 0);
 	for (i = 0; i < h.e_shnum; i++)
 	{
-		read(elf_file, &sh, sizeof(sh));
+		read(ELF_fd, &sh, sizeof(sh));
 		printf("  [%2d] %-17s ", i, st + sh.sh_name);
 		print_sh_type(sh.sh_type);
 		printf("%016x %06x ", (int)sh.sh_addr, (int)sh.sh_offset);
@@ -65,15 +67,15 @@ void print_elf64_section_header_table(int elf_file)
 	}
 	for (i = 0; i < sizeof(FLAG_KEY_LINES) / sizeof(char *); i++)
 		puts(FLAG_KEY_LINES[i]);
-	close(elf_file);
+	close(ELF_fd);
 	free(st);
 }
 
 /**
  * print_elf32_section_header_table - prints ELF32 section header table
- * @elf_file: ELF file descriptor
+ * @ELF_fd: ELF file descriptor
  **/
-void print_elf32_section_header_table(int elf_file)
+void print_elf32_section_header_table(int ELF_fd)
 {
 	Elf32_Ehdr h;
 	Elf32_Shdr sh;
@@ -81,32 +83,32 @@ void print_elf32_section_header_table(int elf_file)
 	char *st;
 	char *FLAG_KEY_LINES[] = {
 		"Key to Flags:",
-		"  W (write), A (alloc), X (execute), M (merge), S (strings), l (large)",
+		"  W (write), A (alloc), X (execute), M (merge), S (strings)",
 		"  I (info), L (link order), G (group), T (TLS), E (exclude), x (unknown)",
 		"  O (extra OS processing required) o (OS specific), p (processor specific)"
 	};
 
 	/* Read ELF header */
-	read(elf_file, &h, sizeof(h));
-	st = get_string_table(elf_file, h.e_shoff + (h.e_shentsize * h.e_shstrndx));
+	read(ELF_fd, &h, sizeof(h));
+	st = get_string_table32(ELF_fd, h.e_shoff + (h.e_shentsize * h.e_shstrndx));
 
 	printf(SH_SUMMARY, h.e_shnum, (unsigned int)h.e_shoff);
 	puts(SH_INTRO);
-	puts(SH_FIRST_ROW);
-	lseek(elf_file, h.e_shoff, 0);
+	puts(SH_FIRST_ROW32);
+	lseek(ELF_fd, h.e_shoff, 0);
 	for (i = 0; i < h.e_shnum; i++)
 	{
-		read(elf_file, &sh, sizeof(sh));
+		read(ELF_fd, &sh, sizeof(sh));
 		printf("  [%2d] %-17s ", i, st + sh.sh_name);
 		print_sh_type(sh.sh_type);
-		printf("%016x %06x ", (int)sh.sh_addr, (int)sh.sh_offset);
+		printf("%08x %06x ", (int)sh.sh_addr, (int)sh.sh_offset);
 		printf("%06x %02x ", (int)sh.sh_size, (int)sh.sh_entsize);
 		print_sh_flags(sh.sh_flags);
 		printf("%2i %3i %2i\n", sh.sh_link, sh.sh_info, (int)sh.sh_addralign);
 	}
 	for (i = 0; i < sizeof(FLAG_KEY_LINES) / sizeof(char *); i++)
 		puts(FLAG_KEY_LINES[i]);
-	close(elf_file);
+	close(ELF_fd);
 	free(st);
 }
 
@@ -128,9 +130,9 @@ void print_sh_flags(uint32_t sh_flags)
 		{SHF_LINK_ORDER, "L"},
 		{SHF_GROUP, "G"},
 		{SHF_TLS, "T"},
+		{SHF_EXCLUDE, "E"},
 		{SHF_MASKOS, "o"},
-		{SHF_MASKPROC, "O"},
-		{SHF_EXCLUDE, "E"}
+		{SHF_MASKPROC, "O"}
 	};
 
 	for (j = 0, k = 0; j < sizeof(flags) / sizeof(macro_matcher_t); j++)

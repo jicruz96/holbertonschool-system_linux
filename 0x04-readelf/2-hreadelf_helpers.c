@@ -9,43 +9,43 @@ void print_elf32_program_header_table(int ELF_fd)
 	Elf32_Ehdr h;
 	Elf32_Phdr ph;
 	unsigned int i, j;
-	char *st;
+	char *st, tmp[512];
 	Elf32_Addr *paddrs;
 	uint32_t *fileszs;
 
 	read(ELF_fd, &h, sizeof(h));
+	if (h.e_phnum == 0)
+	{
+		printf("\nThere are no program headers in this file.\n");
+		return;
+	}
 	printf("\nElf file type is "), print_ELF_file_type(h.e_type);
 	printf("Entry point 0x%x\n", (unsigned int)h.e_entry);
 	printf(PH_SUMMARY, h.e_phnum, (int)h.e_phoff);
 	puts(PH_INTRO), puts(PH_FIRST_ROW);
 	lseek(ELF_fd, h.e_phoff, 0);
-	paddrs = malloc(sizeof(Elf32_Addr) * h.e_phnum);
-	fileszs = malloc(sizeof(uint32_t) * h.e_phnum);
-
+	paddrs = malloc(sizeof(Elf64_Addr) * h.e_phnum);
+	fileszs = malloc(sizeof(uint64_t) * h.e_phnum);
 	for (i = 0; i < h.e_phnum; i++)
 	{
 		read(ELF_fd, &ph, sizeof(ph));
 		paddrs[i] = ph.p_paddr, fileszs[i] = ph.p_filesz;
 		if (print_ELF32_program_header_row(ph) == IS_INTERP_ROW)
 		{
-			lseek(ELF_fd, ph.p_offset, 0);
-			st = malloc(sizeof(char) * ph.p_filesz);
-			read(ELF_fd, st, ph.p_filesz);
-			printf("      [Requesting program interpreter: %s]\n", st);
+			lseek(ELF_fd, ph.p_offset, 0), read(ELF_fd, tmp, ph.p_filesz);
+			printf("      [Requesting program interpreter: %s]\n", tmp);
 			lseek(ELF_fd, h.e_phoff + ((i + 1) * h.e_phentsize), 0);
 		}
 	}
-
 	puts("\n Section to Segment mapping:\n  Segment Sections...");
 	st = get_string_table(ELF_fd, h.e_shoff + (h.e_shentsize * h.e_shstrndx));
 	for (i = 0, j = 0; i < h.e_phnum; printf("\n"), i++)
 	{
-		printf("   %02d     ", i);
-		lseek(ELF_fd, h.e_shoff, 0);
+		lseek(ELF_fd, h.e_shoff, 0), printf("   %02d     ", i);
 		for (j = 0; j < h.e_shnum; j++)
-			print_segment32(ELF_fd, paddrs[i], fileszs[i], st);
+			print_segment64(ELF_fd, paddrs[i], fileszs[i], st);
 	}
-	free(st);
+	free(st), free(paddrs), free(fileszs);
 }
 
 /**
@@ -80,12 +80,12 @@ int print_ELF32_program_header_row(Elf32_Phdr ph)
 
 	flag = print_p_type(ph.p_type);
 	printf("0x%06x ",  (unsigned int)ph.p_offset);
-	printf("0x%016x ", (unsigned int)ph.p_vaddr);
-	printf("0x%016x ", (unsigned int)ph.p_paddr);
-	printf("0x%06x ",  (unsigned int)ph.p_filesz);
-	printf("0x%06x ",  (unsigned int)ph.p_memsz);
+	printf("0x%08x ", (unsigned int)ph.p_vaddr);
+	printf("0x%08x ", (unsigned int)ph.p_paddr);
+	printf("0x%05x ",  (unsigned int)ph.p_filesz);
+	printf("0x%05x ",  (unsigned int)ph.p_memsz);
 	print_p_flags(ph.p_flags);
-	printf("0x%x\n",   (unsigned int)ph.p_align);
+	printf("%#x\n",   (unsigned int)ph.p_align);
 	return (flag);
 }
 

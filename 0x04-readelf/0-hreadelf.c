@@ -79,7 +79,6 @@ void print_elf64_header(int elf_file)
 void print_machine(uint16_t e_machine)
 {
 	macro_matcher_t machines[] = {
-		{EM_NONE, "Unknown machine"},
 		{EM_M32, "AT&T WE 32100"},
 		{EM_SPARC, "Sun Microsystems SPARC"},
 		{EM_386, "Intel 80386"},
@@ -107,6 +106,8 @@ void print_machine(uint16_t e_machine)
 			puts(machines[i].macro_string);
 			return;
 		}
+
+	printf("<unknown: %x>\n", e_machine);
 }
 
 /**
@@ -119,9 +120,9 @@ void print_os_abi(unsigned char os_abi)
 		{ELFOSABI_NONE, "UNIX - System V"},
 		{ELFOSABI_SYSV, "UNIX - System V"},
 		{ELFOSABI_HPUX, "HP-UX"},
-		{ELFOSABI_NETBSD, "NetBSD"},
+		{ELFOSABI_NETBSD, "UNIX - NetBSD"},
 		{ELFOSABI_LINUX, "Linux"},
-		{ELFOSABI_SOLARIS, "Solaris"},
+		{ELFOSABI_SOLARIS, "UNIX - Solaris"},
 		{ELFOSABI_IRIX, "IRIX"},
 		{ELFOSABI_FREEBSD, "FreeBSD"},
 		{ELFOSABI_TRU64, "TRU64 UNIX"},
@@ -138,6 +139,7 @@ void print_os_abi(unsigned char os_abi)
 			return;
 		}
 	}
+	printf("<unknown: %x>\n", os_abi);
 }
 
 /**
