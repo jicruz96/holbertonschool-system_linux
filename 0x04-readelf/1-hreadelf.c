@@ -20,7 +20,7 @@ int main(int argc, char *argv[])
 
 	if (argc > 1)
 	{
-		if (open_ELF_file(&ELF_fd, argv[1], "readelf") == ELFCLASS64)
+		if (open_ELF(&ELF_fd, argv[1], "readelf") == ELFCLASS64)
 			print_elf64_section_header_table(ELF_fd);
 		else
 			print_elf32_section_header_table(ELF_fd);
@@ -49,7 +49,10 @@ void print_elf64_section_header_table(int ELF_fd)
 
 	/* Read ELF header */
 	read(ELF_fd, &h, sizeof(h));
-	st = get_string_table(ELF_fd, h.e_shoff + (h.e_shentsize * h.e_shstrndx));
+	if (h.e_ident[EI_DATA] == ELFDATA2MSB)
+		lseek(ELF_fd, 0, 0), read_elf64_header_MSB(&h, ELF_fd);
+	i = h.e_shoff + (h.e_shentsize * h.e_shstrndx);
+	st = get_string_table64(ELF_fd, i, h.e_ident[EI_DATA]);
 
 	printf(SH_SUMMARY, h.e_shnum, (unsigned int)h.e_shoff);
 	puts(SH_INTRO);
@@ -57,7 +60,10 @@ void print_elf64_section_header_table(int ELF_fd)
 	lseek(ELF_fd, h.e_shoff, 0);
 	for (i = 0; i < h.e_shnum; i++)
 	{
-		read(ELF_fd, &sh, sizeof(sh));
+		if (h.e_ident[EI_DATA] == ELFDATA2MSB)
+			read_elf64_section_MSB(&sh, ELF_fd);
+		else
+			read(ELF_fd, &sh, sizeof(sh));
 		printf("  [%2d] %-17s ", i, st + sh.sh_name);
 		print_sh_type(sh.sh_type);
 		printf("%016x %06x ", (int)sh.sh_addr, (int)sh.sh_offset);
@@ -90,15 +96,20 @@ void print_elf32_section_header_table(int ELF_fd)
 
 	/* Read ELF header */
 	read(ELF_fd, &h, sizeof(h));
-	st = get_string_table32(ELF_fd, h.e_shoff + (h.e_shentsize * h.e_shstrndx));
-
+	if (h.e_ident[EI_DATA] == ELFDATA2MSB)
+		lseek(ELF_fd, 0, 0), read_elf32_header_MSB(&h, ELF_fd);
+	i = h.e_shoff + (h.e_shentsize * h.e_shstrndx);
+	st = get_string_table32(ELF_fd, i, h.e_ident[EI_DATA]);
 	printf(SH_SUMMARY, h.e_shnum, (unsigned int)h.e_shoff);
 	puts(SH_INTRO);
 	puts(SH_FIRST_ROW32);
 	lseek(ELF_fd, h.e_shoff, 0);
 	for (i = 0; i < h.e_shnum; i++)
 	{
-		read(ELF_fd, &sh, sizeof(sh));
+		if (h.e_ident[EI_DATA] == ELFDATA2MSB)
+			read_elf32_section_MSB(&sh, ELF_fd);
+		else
+			read(ELF_fd, &sh, sizeof(sh));
 		printf("  [%2d] %-17s ", i, st + sh.sh_name);
 		print_sh_type(sh.sh_type);
 		printf("%08x %06x ", (int)sh.sh_addr, (int)sh.sh_offset);
@@ -154,42 +165,34 @@ void print_sh_flags(uint32_t sh_flags)
 void print_sh_type(uint32_t sh_type)
 {
 	macro_matcher_t types[] = {
-		{SHT_PROGBITS, "PROGBITS"},
-		{SHT_SYMTAB, "SYMTAB"},
-		{SHT_STRTAB, "STRTAB"},
-		{SHT_RELA, "RELA"},
-		{SHT_HASH, "HASH"},
-		{SHT_DYNAMIC, "DYNAMIC"},
-		{SHT_NOTE, "NOTE"},
-		{SHT_NOBITS, "NOBITS"},
-		{SHT_REL, "REL"},
-		{SHT_SHLIB, "SHLIB"},
-		{SHT_DYNSYM, "DYNSYM"},
-		{SHT_INIT_ARRAY, "INIT_ARRAY"},
-		{SHT_FINI_ARRAY, "FINI_ARRAY"},
-		{SHT_PREINIT_ARRAY, "PREINIT_ARRAY"},
-		{SHT_GROUP, "GROUP"},
-		{SHT_SYMTAB_SHNDX, "SYMTAB_SHNDX"},
-		{SHT_LOOS, "LOOS"},
-		{SHT_GNU_ATTRIBUTES, "GNU_ATTRIBUTES"},
-		{SHT_GNU_HASH, "GNU_HASH"},
-		{SHT_GNU_LIBLIST, "GNU_LIBLIST"},
-		{SHT_CHECKSUM, "CHECKSUM"},
-		{SHT_LOSUNW, "LOSUNW"},
-		{SHT_SUNW_move, "SUNW_move"},
-		{SHT_SUNW_COMDAT, "SUNW_COMDAT"},
-		{SHT_SUNW_syminfo, "SUNW_syminfo"},
-		{SHT_GNU_verdef, "VERDEF"},
-		{SHT_GNU_verneed, "VERNEED"},
-		{SHT_GNU_versym, "VERSYM"},
-		{SHT_HISUNW, "HISUNW"},
-		{SHT_HIOS, "HIOS"},
+		{SHT_PROGBITS, "PROGBITS"}, {SHT_SYMTAB, "SYMTAB"},
+		{SHT_STRTAB, "STRTAB"}, {SHT_RELA, "RELA"},
+		{SHT_HASH, "HASH"}, {SHT_DYNAMIC, "DYNAMIC"},
+		{SHT_NOTE, "NOTE"}, {SHT_NOBITS, "NOBITS"},
+		{SHT_REL, "REL"}, {SHT_SHLIB, "SHLIB"},
+		{SHT_DYNSYM, "DYNSYM"}, {SHT_INIT_ARRAY, "INIT_ARRAY"},
+		{SHT_FINI_ARRAY, "FINI_ARRAY"}, {SHT_PREINIT_ARRAY, "PREINIT_ARRAY"},
+		{SHT_GROUP, "GROUP"}, {SHT_SYMTAB_SHNDX, "SYMTAB_SHNDX"},
+		{SHT_LOOS, "LOOS"}, {SHT_GNU_ATTRIBUTES, "GNU_ATTRIBUTES"},
+		{SHT_GNU_HASH, "GNU_HASH"}, {SHT_GNU_LIBLIST, "GNU_LIBLIST"},
+		{SHT_CHECKSUM, "CHECKSUM"}, {SHT_LOSUNW, "LOSUNW"},
+		{SHT_SUNW_move, "SUNW_move"}, {SHT_SUNW_COMDAT, "SUNW_COMDAT"},
+		{SHT_SUNW_syminfo, "VERDEF"}, {SHT_GNU_verdef, "VERDEF"},
+		{SHT_GNU_verneed, "VERNEED"}, {SHT_GNU_versym, "VERSYM"},
+		{SHT_HISUNW, "HISUNW"}, {SHT_HIOS, "HIOS"},
 		{SHT_LOPROC, "LOPROC"}, {SHT_HIPROC, "HIPROC"},
 		{SHT_LOUSER, "LOUSER"}, {SHT_HIUSER, "HIUSER"}
 	};
 	int types_size = sizeof(types) / sizeof(macro_matcher_t), i;
 
-	for (i = 0; i < types_size && sh_type != (unsigned int)types[i].macro; i++)
-		;
-	printf("%-15s ", i == types_size ? "NULL" : types[i].macro_string);
+	for (i = 0; i < types_size; i++)
+		if (sh_type == (unsigned int)types[i].macro)
+		{
+			printf("%-15s ", types[i].macro_string);
+			return;
+		}
+	if (sh_type)
+		printf("LOOS+%x    ", sh_type & 0xfffffff);
+	else
+		printf("NULL            ");
 }

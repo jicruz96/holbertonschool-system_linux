@@ -1,10 +1,10 @@
 #include "hreadelf.h"
 
 /**
- * print_ELF_file_type - prints ELF file type
+ * print_elf_file_type - prints ELF file type
  * @e_type: ELF header e_type value
  **/
-void print_ELF_file_type(uint16_t e_type)
+void print_elf_file_type(uint16_t e_type)
 {
 	macro_matcher_t types[] = {
 		{ET_NONE, "NONE (Unknown type)"},
