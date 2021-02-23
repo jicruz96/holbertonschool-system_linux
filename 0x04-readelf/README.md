@@ -5,23 +5,29 @@ This is the fourth project of the Holberton School Linux System section of the L
 ## What we did 🤔
 
 In this project, we:
-* learned about the `/proc` filesystem and all its intricacies. Check out notes in the [proc_notes.md](./proc_notes.md) file.
-* learned about virtual memory mapping
-* wrote a script that can find and replace a string in a process's heap.
+* learned about the anatomy of an Executable and Linkable Format (ELF) file
+* wrote 3 programs that detail information about an ELF file. These program mimic a type of output of the Linux program `readelf` with the `-W` flag (for fixed width)
 
-## The `read_write_heap.py` Python script
-
-[This script](./read_write_heap.py) finds a string in the heap of a running process, and replaces it with a user-defined replacement.
+1. `0-hreadelf`: mimics `readelf -W -h`, which prints the header of an ELF file.
+2. `1-hreadelf`: mimics `readelf -W -S`, which prints the section header table of an ELF file.
+3. `2-hreadelf`: mimics `readelf -W -l`, which prints the program header table of an ELF file.
 
 ### Usage:
 
-```bash
-read_write_heap.py pid search_string replace_string
-```
-where:
-* `pid` is the process ID of the running process.
-* `search_string` and `replace_string` are ASCII-encoded strings
+Requirements:
+* GNU make >= 3.81
+* GCC >= 4.8.4
 
-[Here's a video](youtube.com/watch?v=xcpXT4Bukgk) demonstrating the script in action.
+Install and `make` the programs like so:
+
+```bash
+$ git clone https://github.com/jicruz96/holbertonschool-system_linux
+...
+$ cd 0x04-readelf
+$ make 0-hreadelf # makes 0-hreadelf 
+$ make 1-hreadelf # makes 1-hreadelf 
+$ make 2-hreadelf # makes 2-hreadelf 
+```
+
 
 > Written by J. to the is I.
