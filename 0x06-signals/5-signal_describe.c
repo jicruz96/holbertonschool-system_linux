@@ -19,7 +19,7 @@ int main(int argc, char *argv[])
 	}
 	signum = atoi(argv[1]);
 
-	if (signum > (sizeof(sys_siglist) / sizeof(char *)) - 1)
+	if (!signum || signum > (sizeof(sys_siglist) / sizeof(char *)) - 1)
 		printf("%lu: Unknown signal %lu\n", signum, signum);
 	else
 		printf("%lu: %s\n", signum, sys_siglist[signum]);
