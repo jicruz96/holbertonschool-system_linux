@@ -1,7 +1,6 @@
 #include "signals.h"
 #include <string.h>
 #include <unistd.h>
-#include <sys/proc.h>
 
 /**
  * gotcha - prints gotcha message when called on by SIGQUIT
