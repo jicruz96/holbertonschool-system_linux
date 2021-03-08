@@ -3,7 +3,7 @@
 #include <unistd.h>
 
 /**
- * gotcha - prints "Gotcha! [<signum]" when called on by a signal handler
+ * gotcha - prints "Gotcha! [<signum]" when SIGINT sent to process
  * @signum: signal number
  **/
 void gotcha(int signum)
