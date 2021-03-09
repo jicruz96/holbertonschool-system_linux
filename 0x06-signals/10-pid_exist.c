@@ -1,5 +1,7 @@
-#include "signals.h"
 #include <errno.h>
+#include <signal.h>
+
+int pid_exist(pid_t pid);
 
 /**
  * pid_exist - checks if a given pid represents an existing process
@@ -8,5 +10,5 @@
  **/
 int pid_exist(pid_t pid)
 {
-    return (kill(pid, 0) < 1 && errno != ESRCH);
+	return (kill(pid, 0) < 1 && errno != ESRCH);
 }
