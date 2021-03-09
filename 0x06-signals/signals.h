@@ -30,6 +30,9 @@ void (*current_handler_sigaction(void))(int);
 /* 4-trace_signal_sender.c */
 int trace_signal_sender(void);
 
+/* 10-pid_exist.c */
+int pid_exist(pid_t pid);
+
 /* 100-all_in_one.c */
 void all_in_one(void);
 
