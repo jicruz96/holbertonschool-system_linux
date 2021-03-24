@@ -53,9 +53,9 @@ static int hnm(char *filename)
 	if (elf_fd == -1)
 	{
 		if (errno == ENOENT)
-			fprintf(stderr, "nm: '%s': No such file\n", filename);
+			fprintf(stderr, "hnm: '%s': No such file\n", filename);
 		else
-			fprintf(stderr, "nm: %s: unknown error when opening\n", filename);
+			fprintf(stderr, "hnm: %s: unknown error when opening\n", filename);
 		return (1);
 	}
 
@@ -63,7 +63,7 @@ static int hnm(char *filename)
 	if (read(elf_fd, elf_id, sizeof(elf_id)) < EI_NIDENT ||
 		memcmp(ELFMAG, elf_id, SELFMAG) != 0)
 	{
-		fprintf(stderr, "nm: %s: File format not recognized\n", filename);
+		fprintf(stderr, "hnm: %s: File format not recognized\n", filename);
 		return (1);
 	}
 

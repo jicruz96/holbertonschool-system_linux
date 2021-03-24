@@ -51,7 +51,7 @@ int hnm_32(char *file, int elf_fd, int encoding)
 	/* Print error message and return if no symbols in ELF file */
 	if (num_rows == 0)
 	{
-		fprintf(stderr, "nm: %s: no symbols\n", file);
+		fprintf(stderr, "hnm: %s: no symbols\n", file);
 		return (1);
 	}
 
