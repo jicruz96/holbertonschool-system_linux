@@ -11,12 +11,13 @@
 
 /**
  * hnm_64 - hnm 64
+ * @program_name: program name
  * @file: file name
  * @elf_fd: ELF file descriptor
  * @encoding: file encoding
  * Return: 1 if no symbols found | 0 on success
  **/
-int hnm_64(char *file, int elf_fd, int encoding)
+int hnm_64(char *program_name, char *file, int elf_fd, int encoding)
 {
 	uint16_t i;
 	Elf64_Ehdr h;
@@ -51,7 +52,7 @@ int hnm_64(char *file, int elf_fd, int encoding)
 	/* Print error message and return if no symbols in ELF file */
 	if (num_rows == 0)
 	{
-		fprintf(stderr,"nm: %s: no symbols\n", file);
+		fprintf(stderr, "%s: %s: no symbols\n", program_name, file);
 		return (1);
 	}
 
