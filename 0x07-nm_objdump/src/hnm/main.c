@@ -20,7 +20,7 @@ int main(int argc, char *argv[])
 
 	/* If no arguments given, assume "./a.out" */
 	if (argc == 1)
-		return (hnm("./a.out"));
+		return (hnm("a.out"));
 
 	/* If one argument given, execute normally */
 	if (argc == 2)
@@ -53,9 +53,9 @@ static int hnm(char *filename)
 	if (elf_fd == -1)
 	{
 		if (errno == ENOENT)
-			fprintf(stderr, "hnm: '%s': No such file\n", filename);
+			fprintf(stderr,"nm: '%s': No such file\n", filename);
 		else
-			fprintf(stderr, "hnm: %s: unknown error when opening\n", filename);
+			fprintf(stderr,"nm: %s: unknown error when opening\n", filename);
 		return (1);
 	}
 
@@ -63,7 +63,7 @@ static int hnm(char *filename)
 	if (read(elf_fd, elf_id, sizeof(elf_id)) < EI_NIDENT ||
 		memcmp(ELFMAG, elf_id, SELFMAG) != 0)
 	{
-		fprintf(stderr, "hnm: %s: File format not recognized\n", filename);
+		fprintf(stderr,"nm: %s: File format not recognized\n", filename);
 		return (1);
 	}
 
