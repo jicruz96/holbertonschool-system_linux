@@ -21,7 +21,7 @@ int main(int argc, char *argv[])
 	/* If no arguments given, assume "./a.out" */
 	if (argc == 1)
 		return (hnm("./a.out"));
-	
+
 	/* If one argument given, execute normally */
 	if (argc == 2)
 		return (hnm(argv[1]));
