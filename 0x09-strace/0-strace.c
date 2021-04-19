@@ -24,6 +24,7 @@ int main(int argc, char *argv[], char *envp[])
 
 	if (pid == 0)
 	{
+		printf("59\n"); /* execve syscall number */
 		ptrace(PTRACE_TRACEME, pid, NULL, NULL);
 		execve(argv[1], argv + 1, envp);
 	}
