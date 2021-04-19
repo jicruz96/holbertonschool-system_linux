@@ -9,7 +9,7 @@
  **/
 int main(int argc, char *argv[], char *envp[])
 {
-	int i, skip, status, num_calls = sizeof(syscalls_64_g) / sizeof(syscall_t);
+	int i, status;
 	struct user_regs_struct regs;
 	pid_t pid;
 
@@ -18,31 +18,26 @@ int main(int argc, char *argv[], char *envp[])
 		fprintf(stderr, "Usage: %s <full_path> [path_args]\n", argv[0]);
 		return (1);
 	}
-
+	setbuf(stdout, NULL);
 	pid = fork();
 
 	if (pid == 0)
 	{
+		printf("execve");
 		ptrace(PTRACE_TRACEME, pid, NULL, NULL);
 		execve(argv[1], argv + 1, envp);
 	}
 	else
 	{
-		for (status = 1, skip = 0; !WIFEXITED(status); skip ^= 1)
+		for (status = 1, i = 1; !WIFEXITED(status); i ^= 1)
 		{
 			ptrace(PT_SYSCALL, pid, NULL, NULL);
 			wait(&status);
 			ptrace(PT_GETREGS, pid, NULL, &regs);
-			if (skip)
-				continue;
-			for (i = 0; i < num_calls; i++)
-			{
-				if (syscalls_64_g[i].nr == (size_t)regs.orig_rax)
-				{
-					puts(syscalls_64_g[i].name);
-					break;
-				}
-			}
+			if (i)
+				printf("\n");
+			else
+				printf("%s", syscalls_64_g[regs.orig_rax].name);
 		}
 	}
 
