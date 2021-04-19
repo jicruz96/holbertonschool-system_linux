@@ -19,7 +19,7 @@ int main(int argc, char *argv[], char *envp[])
 		fprintf(stderr, "Usage: %s <full_path> [path_args]\n", argv[0]);
 		return (1);
 	}
-
+	setbuf(stdout, NULL);
 	pid = fork();
 	if (pid == 0)
 	{
@@ -36,13 +36,14 @@ int main(int argc, char *argv[], char *envp[])
 			wait(&status);
 			ptrace(PT_GETREGS, pid, NULL, &regs);
 			if (i)
-				continue;
-			printf("%s", syscalls_64_g[regs.orig_rax].name);
-			print_args(&syscalls_64_g[regs.orig_rax], &regs, pid);
-			if (WIFEXITED(status))
-				puts(" = ?");
+			{
+				printf("\n%s", syscalls_64_g[regs.orig_rax].name);
+				print_args(&syscalls_64_g[regs.orig_rax], &regs, pid);
+			}
+			else if (WIFEXITED(status))
+				printf(") = ?\n");
 			else
-				printf(" = %#lx\n", (size_t)regs.rax);
+				printf(") = %#lx", (size_t)regs.rax);
 		}
 	}
 
@@ -78,7 +79,7 @@ int print_execve_line(int argc, char *argv[], char *envp[], pid_t pid)
 		printf("%s\"%s\"", i == 1 ? "" : ", ", argv[i]);
 	for (i = 0; envp[i]; i++)
 		;
-	printf("], [/* %d vars */]) = %#lx\n", i, (size_t)regs.rax);
+	printf("], [/* %d vars */]) = %#lx", i, (size_t)regs.rax);
 	return (1);
 }
 
@@ -101,7 +102,7 @@ void print_args(const syscall_t *sc, struct user_regs_struct *regs, pid_t pid)
 	putchar('(');
 	for (i = 0; i < sc->nb_params; i++)
 	{
-		printf(i ? "" : ", ");
+		printf(i ? ", " : "");
 		if (sc->params[i] == CHAR_P)
 		{
 			if (params[i])
@@ -128,6 +129,5 @@ void print_args(const syscall_t *sc, struct user_regs_struct *regs, pid_t pid)
 			printf("%#lx", (size_t)params[i]);
 		}
 	}
-	putchar(')');
 	free(str);
 }
