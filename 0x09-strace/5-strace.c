@@ -8,7 +8,7 @@
  **/
 void print_arg(type_t type, unsigned long int arg)
 {
-	if (type == INT)
+	if (IS_INT(type))
 		printf("%d", (int)arg);
 	else if (IS_LONG(type))
 		printf("%ld", (long)arg);
@@ -62,7 +62,6 @@ void print_args(
 			print_arg(syscall->params[i], params[i]);
 		}
 	}
-	putchar(')');
 	free(str);
 }
 
@@ -94,7 +93,7 @@ int print_execve_line(int argc, char *argv[], char *envp[], pid_t pid)
 		printf("%s\"%s\"", i == 1 ? "" : ", ", argv[i]);
 	for (i = 0; envp[i]; i++)
 		;
-	printf("], [/* %d vars */]) = %#lx\n", i, (size_t)regs.rax);
+	printf("], [/* %d vars */]) = %#lx", i, (size_t)regs.rax);
 	return (1);
 }
 
@@ -116,6 +115,7 @@ int main(int argc, char *argv[], char *envp[])
 		fprintf(stderr, "Usage: %s <full_path> [path_args]\n", argv[0]);
 		return (1);
 	}
+	setbuf(stdout, NULL);
 	pid = fork();
 	if (pid == 0)
 	{
@@ -131,20 +131,17 @@ int main(int argc, char *argv[], char *envp[])
 			wait(&status);
 			ptrace(PT_GETREGS, pid, NULL, &regs);
 			if (i)
-				continue;
-			printf("%s", syscalls_64_g[regs.orig_rax].name);
-			print_args(&syscalls_64_g[regs.orig_rax], &regs, pid);
-			if (WIFEXITED(status))
 			{
-				puts(" = ?");
+				printf("\n%s", syscalls_64_g[regs.orig_rax].name);
+				print_args(&syscalls_64_g[regs.orig_rax], &regs, pid);
 			}
-			else
+			else if (!WIFEXITED(status))
 			{
-				printf(" = ");
+				printf(") = ");
 				print_arg(syscalls_64_g[regs.orig_rax].ret, regs.rax);
-				printf("\n");
 			}
 		}
 	}
+	printf(") = ?\n");
 	return (0);
 }
