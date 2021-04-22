@@ -23,7 +23,7 @@
 	x == ID_T || x == MODE_T || x == SIZE_T || x == SOCKLEN_T || x == U64 ||\
 	x == UID_T || x == UNSIGNED_LONG)
 #define IS_LONG(x) (x == LONG || x == PID_T || x == SSIZE_T || x == CLOCK_T ||\
-	x == OFF64_T || x == OFF_T || x == SSIZE_T || x == TIME_T)
+	x == TIME_T)
 
 #define IS_INT(x) (x == CLOCKID_T || x == KEY_T || x == MQD_T ||\
 	x == IDTYPE_T || x == INT || x == KEY_SERIAL_T ||\
