@@ -16,7 +16,7 @@ void print_args(const syscall_t *sc, struct user_regs_struct *regs, pid_t pid)
 	params[3] = regs->r10, params[4] = regs->r8, params[5] = regs->r9;
 
 	putchar('(');
-	for (i = 0; i < sc->nb_params; i++)
+	for (i = 0; sc->params[0] != VOID && i < sc->nb_params; i++)
 		if (sc->params[i] == VARARGS)
 			printf("%s...", i ? ", " : "");
 		else
