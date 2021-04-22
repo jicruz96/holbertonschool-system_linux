@@ -22,12 +22,11 @@ void print_arg(type_t type, unsigned long int arg)
 
 /**
  * print_args - print system call arguments
- * @syscall: syscall info
+ * @sc: syscall info
  * @regs: registers (struct user_regs_struct)
  * @pid: pid
  **/
-void print_args(
-	const syscall_t *syscall, struct user_regs_struct *regs, pid_t pid)
+void print_args(const syscall_t *sc, struct user_regs_struct *regs, pid_t pid)
 {
 	size_t i, params[MAX_PARAMS];
 	char *str = malloc(4096);
@@ -37,11 +36,11 @@ void print_args(
 	params[3] = regs->r10, params[4] = regs->r8, params[5] = regs->r9;
 
 	putchar('(');
-	for (i = 0; i < syscall->nb_params; i++)
+	for (i = 0; sc->params[0] != VOID && i < sc->nb_params; i++)
 	{
 		if (i)
 			printf(", ");
-		if (syscall->params[i] == CHAR_P && params[i])
+		if (sc->params[i] == CHAR_P && params[i])
 		{
 			for (bytes = 0; 1; bytes += sizeof(buf))
 			{
@@ -59,7 +58,7 @@ void print_args(
 		}
 		else
 		{
-			print_arg(syscall->params[i], params[i]);
+			print_arg(sc->params[i], params[i]);
 		}
 	}
 	free(str);
