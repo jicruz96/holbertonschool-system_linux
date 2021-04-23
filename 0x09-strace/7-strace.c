@@ -75,6 +75,8 @@ void print_args(const syscall_t *sc, struct user_regs_struct *regs, pid_t pid)
 
 		if (sc->params[i] == CHAR_P && args[i])
 			print_string(pid, args[i]);
+		else if (IS_POINTER(sc->params[i]) && !args[i])
+			printf("NULL");
 		else if (i == 1)
 		{
 			if (!strcmp(sc->name, "open"))
@@ -86,8 +88,6 @@ void print_args(const syscall_t *sc, struct user_regs_struct *regs, pid_t pid)
 			else
 				print_arg(sc->params[i], args[i]);
 		}
-		else if (IS_POINTER(sc->params[i]) && !args[i])
-			printf("NULL");
 		else if (strcmp(sc->name, "mmap") || (i != 2 && i != 3))
 			print_arg(sc->params[i], args[i]);
 		else if (i == 2)
