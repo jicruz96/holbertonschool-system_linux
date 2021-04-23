@@ -98,7 +98,6 @@ void print_args(const syscall_t *sc, struct user_regs_struct *regs, pid_t pid)
 
 	params[0] = regs->rdi, params[1] = regs->rsi, params[2] = regs->rdx;
 	params[3] = regs->r10, params[4] = regs->r8, params[5] = regs->r9;
-
 	putchar('(');
 	for (i = 0; sc->params[0] != VOID && i < sc->nb_params; i++)
 	{
@@ -124,10 +123,10 @@ void print_args(const syscall_t *sc, struct user_regs_struct *regs, pid_t pid)
 			else
 				printf("0");
 		}
+		else if (sc->params[i] == VARARGS)
+			printf("...");
 		else
-		{
 			printf("%#lx", (size_t)params[i]);
-		}
 	}
 	free(str);
 }
