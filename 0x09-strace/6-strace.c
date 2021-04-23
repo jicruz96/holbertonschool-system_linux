@@ -146,6 +146,7 @@ int main(int argc, char *argv[], char *envp[])
 		fprintf(stderr, "Usage: %s <full_path> [path_args]\n", argv[0]);
 		return (1);
 	}
+	setbuf(stdout, NULL);
 	pid = fork();
 	if (pid == 0)
 	{
@@ -164,16 +165,12 @@ int main(int argc, char *argv[], char *envp[])
 				continue;
 			printf("%s", syscalls_64_g[regs.orig_rax].name);
 			print_args(&syscalls_64_g[regs.orig_rax], &regs, pid);
+			printf(" = ");
 			if (WIFEXITED(status))
-			{
-				printf(" = ?\n");
-			}
+				printf("?");
 			else
-			{
-				printf(" = ");
 				print_arg(syscalls_64_g[regs.orig_rax].ret, regs.rax);
-				printf("\n");
-			}
+			printf("\n");
 		}
 	}
 	return (0);
