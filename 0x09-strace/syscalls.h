@@ -307,6 +307,7 @@ void print_open_flags(int open_flags);
 void print_access_flags(int access_flags);
 void print_read_write_buffer(pid_t pid, unsigned long addr, size_t buf_size);
 void print_stat_struct(pid_t pid, unsigned long addr);
+void print_mode(mode_t mode);
 
 
 

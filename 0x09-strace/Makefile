@@ -34,6 +34,6 @@ $(FILENAME)_6: $(6_SRC:.c=.o)
 $(FILENAME)_7: $(7_SRC:.c=.o)
 	$(CC) $(CFLAGS) $(7_SRC) -o $(FILENAME)_7
 
-8_SRC = 8-$(FILENAME).c 8-$(FILENAME)_2.c
+8_SRC = 8-$(FILENAME).c 8-$(FILENAME)_2.c 8-$(FILENAME)_3.c
 $(FILENAME)_8: $(8_SRC:.c=.o)
 	$(CC) $(CFLAGS) $(8_SRC) -o $(FILENAME)_8
