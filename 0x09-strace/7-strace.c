@@ -81,11 +81,11 @@ void print_args(const syscall_t *sc, struct user_regs_struct *regs, pid_t pid)
 				print_open_flags(args[i]);
 			else if (!strcmp(sc->name, "access"))
 				print_access_flags(args[i]);
-			else if (!strcmp(sc->name, "read") || !strcmp(sc->name, "write"))
+			else if (!strcmp(sc->name, "write"))
 				print_read_write_buffer(pid, args[i], args[i + 1]);
 			else
 				print_arg(sc->params[i], args[i]);
-		} 
+		}
 		else if (IS_POINTER(sc->params[i]) && !args[i])
 			printf("NULL");
 		else if (strcmp(sc->name, "mmap") || (i != 2 && i != 3))
@@ -165,15 +165,17 @@ int main(int argc, char *argv[], char *envp[])
 		for (i = 1; !WIFEXITED(status); i ^= 1)
 		{
 			ptrace(PT_SYSCALL, pid, NULL, NULL);
-			wait(&status);
-			ptrace(PT_GETREGS, pid, NULL, &regs);
+			wait(&status), ptrace(PT_GETREGS, pid, NULL, &regs);
 			if (i)
 			{
 				printf("\n%s", syscalls_64_g[regs.orig_rax].name);
-				print_args(&syscalls_64_g[regs.orig_rax], &regs, pid);
+				if (strcmp(syscalls_64_g[regs.orig_rax].name, "read"))
+					print_args(&syscalls_64_g[regs.orig_rax], &regs, pid);
 			}
 			else if (!WIFEXITED(status))
 			{
+				if (!strcmp(syscalls_64_g[regs.orig_rax].name, "read"))
+					print_args(&syscalls_64_g[regs.orig_rax], &regs, pid);
 				printf(") = ");
 				print_arg(syscalls_64_g[regs.orig_rax].ret, regs.rax);
 			}
