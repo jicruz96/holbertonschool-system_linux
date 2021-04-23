@@ -81,7 +81,7 @@ void print_args(const syscall_t *sc, struct user_regs_struct *regs, pid_t pid)
 				print_open_flags(args[i]);
 			else if (!strcmp(sc->name, "access"))
 				print_access_flags(args[i]);
-			else if (!strcmp(sc->name, "write"))
+			else if (!strcmp(sc->name, "read") || !strcmp(sc->name, "write"))
 				print_read_write_buffer(pid, args[i], args[i + 1]);
 			else
 				print_arg(sc->params[i], args[i]);
