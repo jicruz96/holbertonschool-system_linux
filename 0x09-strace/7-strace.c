@@ -30,8 +30,8 @@ void print_string(pid_t pid, unsigned long addr)
 		if (memchr(&tmp, '\0', sizeof(tmp)))
 			break;
 	}
-
 	printf("\"%s\"", buf);
+	free(buf);
 }
 
 /**
@@ -68,9 +68,10 @@ void print_args(const syscall_t *sc, struct user_regs_struct *regs, pid_t pid)
 
 	putchar('(');
 
-	for (i = 0; i < sc->nb_params; i++)
+	for (i = 0; sc->params[0] != VOID && i < sc->nb_params; i++)
 	{
-		printf(i ? ", " : "");
+		if (i)
+		printf(", ");
 
 		if (sc->params[i] == CHAR_P && args[i])
 			print_string(pid, args[i]);
@@ -84,20 +85,16 @@ void print_args(const syscall_t *sc, struct user_regs_struct *regs, pid_t pid)
 				print_read_write_buffer(pid, args[i], args[i + 1]);
 			else
 				print_arg(sc->params[i], args[i]);
-		}
-		else if (strcmp(sc->name, "mmap"))
-			print_arg(sc->params[i], args[i]);
-		else if (sc->params[i] == VOID_P && !args[i])
+		} 
+		else if (IS_POINTER(sc->params[i]) && !args[i])
 			printf("NULL");
+		else if (strcmp(sc->name, "mmap") || (i != 2 && i != 3))
+			print_arg(sc->params[i], args[i]);
 		else if (i == 2)
 			print_mmap_prot_flags(args[i]);
-		else if (i == 3)
-			print_mmap_flags(args[i]);
 		else
-			print_arg(sc->params[i], args[i]);
+			print_mmap_flags(args[i]);
 	}
-
-	putchar(')');
 }
 
 /**
@@ -133,7 +130,7 @@ int print_execve_line(int argc, char *argv[], char *envp[], pid_t pid)
 	for (i = 0; envp[i]; i++)
 		;
 
-	printf("], [/* %d vars */]) = %#lx\n", i, (size_t)regs.rax);
+	printf("], [/* %d vars */]) = %#lx", i, (size_t)regs.rax);
 	return (1);
 }
 
@@ -155,6 +152,7 @@ int main(int argc, char *argv[], char *envp[])
 		fprintf(stderr, "Usage: %s <full_path> [path_args]\n", argv[0]);
 		return (1);
 	}
+	setbuf(stdout, NULL);
 	pid = fork();
 	if (pid == 0)
 	{
@@ -170,20 +168,17 @@ int main(int argc, char *argv[], char *envp[])
 			wait(&status);
 			ptrace(PT_GETREGS, pid, NULL, &regs);
 			if (i)
-				continue;
-			printf("%s", syscalls_64_g[regs.orig_rax].name);
-			print_args(&syscalls_64_g[regs.orig_rax], &regs, pid);
-			if (WIFEXITED(status))
 			{
-				printf(" = ?\n");
+				printf("\n%s", syscalls_64_g[regs.orig_rax].name);
+				print_args(&syscalls_64_g[regs.orig_rax], &regs, pid);
 			}
-			else
+			else if (!WIFEXITED(status))
 			{
-				printf(" = ");
+				printf(") = ");
 				print_arg(syscalls_64_g[regs.orig_rax].ret, regs.rax);
-				printf("\n");
 			}
 		}
 	}
+	printf(") = ?\n");
 	return (0);
 }
