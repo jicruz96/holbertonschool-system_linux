@@ -54,7 +54,7 @@ void print_args(const syscall_t *sc, struct user_regs_struct *regs, pid_t pid)
 				if (memchr(&buf, '\0', sizeof(buf)))
 					break;
 			}
-			printf("%s\"%s\"", i ? ", " : "", str);
+			printf("\"%s\"", str);
 		}
 		else
 		{
