@@ -29,6 +29,31 @@
 	x == IDTYPE_T || x == INT || x == KEY_SERIAL_T ||\
 	x == ENUM___PTRACE_REQUEST || x == PID_T)
 
+#define IS_POINTER(x) (x == AIO_CONTEXT_T_P || x == CHAR_P ||\
+	x == CPU_SET_T_P || x == FD_SET_P || x == GID_T_P || x == INT_P ||\
+	x == LOFF_T_P || x == LONG_P || x == OFF_T_P || x == SIGINFO_T_P ||\
+	x == SIGSET_T_P || x == SIZE_T_P || x == SOCKLEN_T_P || x == STACK_T_P ||\
+	x == STRUCT_EPOLL_EVENT_P || x == STRUCT_GETCPU_CACHE_P ||\
+	x == STRUCT_IOCB_P || x == STRUCT_IOVEC_P || x == STRUCT_IO_EVENT_P ||\
+	x == STRUCT_ITIMERSPEC_P || x == STRUCT_ITIMERVAL_P ||\
+	x == STRUCT_KERNEL_SYM_P || x == STRUCT_KEXEC_SEGMENT_P ||\
+	x == STRUCT_LINUX_DIRENT_P || x == STRUCT_MMSGHDR_P ||\
+	x == STRUCT_MQ_ATTR_P || x == STRUCT_MSGHDR_P || x == STRUCT_MSQID_DS_P ||\
+	x == STRUCT_NFSCTL_ARG_P || x == STRUCT_OLD_LINUX_DIRENT_P ||\
+	x == STRUCT_PERF_EVENT_ATTR_P || x == STRUCT_POLLFD_P ||\
+	x == STRUCT_RLIMIT_P || x == STRUCT_ROBUST_LIST_HEAD_P ||\
+	x == STRUCT_RUSAGE_P || x == STRUCT_SCHED_PARAM_P ||\
+	x == STRUCT_SEMBUF_P || x == STRUCT_SHMID_DS_P ||\
+	x == STRUCT_SIGACTION_P || x == STRUCT_SIGEVENT_P ||\
+	x == STRUCT_SOCKADDR_P || x == STRUCT_STATFS_P || x == STRUCT_STAT_P ||\
+	x == STRUCT_SYSINFO_P || x == STRUCT_TIMESPEC_P || x == STRUCT_TIMEVAL_P ||\
+	x == STRUCT_TIMEX_P || x == STRUCT_TIMEZONE_P || x == STRUCT_TMS_P ||\
+	x == STRUCT_USER_DESC_P || x == STRUCT_USTAT_P || x == STRUCT_UTIMBUF_P ||\
+	x == STRUCT_UTSNAME_P || x == STRUCT_VM86_STRUCT_P ||\
+	x == STRUCT___SYSCTL_ARGS_P || x == TIMER_T_P || x == TIME_T_P ||\
+	x == UID_T_P || x == UNION_NFSCTL_RES_P || x == UNSIGNED_CHAR_P ||\
+	x == UNSIGNED_LONG_P || x == UNSIGNED_P || x == VOID_P)
+
 /**
  * struct flag_s - struct that associates a flag macro with its name and value
  * @name: name of flag as a string

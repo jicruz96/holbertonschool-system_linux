@@ -68,7 +68,7 @@ void print_args(const syscall_t *sc, struct user_regs_struct *regs, pid_t pid)
 
 	putchar('(');
 
-	for (i = 0; i < sc->nb_params; i++)
+	for (i = 0; sc->params[0] != VOID && i < sc->nb_params; i++)
 	{
 		if (i)
 			printf(", ");
@@ -79,7 +79,7 @@ void print_args(const syscall_t *sc, struct user_regs_struct *regs, pid_t pid)
 			print_open_flags(args[i]);
 		else if (i == 1 && !strcmp(sc->name, "access"))
 			print_access_flags(args[i]);
-		else if (sc->params[i] == VOID_P && !args[i])
+		else if (IS_POINTER(sc->params[i]) && !args[i])
 			printf("NULL");
 		else if (strcmp(sc->name, "mmap") || (i != 2 && i != 3))
 			print_arg(sc->params[i], args[i]);
