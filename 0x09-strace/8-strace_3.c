@@ -8,19 +8,19 @@
 void print_mode(mode_t mode)
 {
 	if (S_ISREG(mode))
-		printf("S_ISREG");
+		printf("S_IFREG");
 	else if (S_ISDIR(mode))
-		printf("S_ISDIR");
+		printf("S_IFDIR");
 	else if (S_ISCHR(mode))
-		printf("S_ISCHR");
+		printf("S_IFCHR");
 	else if (S_ISBLK(mode))
-		printf("S_ISBLK");
+		printf("S_IFBLK");
 	else if (S_ISFIFO(mode))
-		printf("S_ISFIFO");
+		printf("S_IFFIFO");
 	else if (S_ISLNK(mode))
-		printf("S_ISLNK");
+		printf("S_IFLNK");
 	else if (S_ISSOCK(mode))
-		printf("S_ISSOCK");
+		printf("S_IFSOCK");
 }
 
 /**
