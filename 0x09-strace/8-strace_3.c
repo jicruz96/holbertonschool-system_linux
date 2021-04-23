@@ -16,7 +16,7 @@ void print_mode(mode_t mode)
 	else if (S_ISBLK(mode))
 		printf("S_IFBLK");
 	else if (S_ISFIFO(mode))
-		printf("S_IFFIFO");
+		printf("S_IFIFO");
 	else if (S_ISLNK(mode))
 		printf("S_IFLNK");
 	else if (S_ISSOCK(mode))
