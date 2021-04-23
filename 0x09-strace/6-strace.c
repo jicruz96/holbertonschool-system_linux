@@ -30,8 +30,8 @@ void print_string(pid_t pid, unsigned long addr)
 		if (memchr(&tmp, '\0', sizeof(tmp)))
 			break;
 	}
-
 	printf("\"%s\"", buf);
+	free(buf);
 }
 
 /**
