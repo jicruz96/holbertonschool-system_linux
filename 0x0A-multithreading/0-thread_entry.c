@@ -1,7 +1,6 @@
 #include "multithreading.h"
 #include <pthread.h>
-#include <unistd.h>
-#include <string.h>
+#include <stdio.h>
 
 /**
  * thread_entry - entry point to a new thread
@@ -11,8 +10,6 @@
 void *thread_entry(void *arg)
 {
 	if (arg)
-		write(STDOUT_FILENO, arg, strlen((char *)arg));
-	write(STDOUT_FILENO, "\n", 1);
+		puts((char *)arg);
 	pthread_exit(NULL);
-	return (NULL);
 }
