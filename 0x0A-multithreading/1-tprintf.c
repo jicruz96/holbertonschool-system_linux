@@ -1,12 +1,16 @@
 #include "multithreading.h"
+#include <stdio.h>
+#include <pthread.h>
 
 /**
- * trpintf - uses printf family to print out a given formatted string
+ * tprintf - uses printf family to print out a given formatted string
  * @format: formatted string
  * Return: number of characters printed
  **/
 int tprintf(char const *format, ...)
 {
-	(void)format;
+	pthread_t self = pthread_self();
+
+	printf("[%lu] %s", self, format);
 	return (0);
 }
