@@ -18,6 +18,7 @@ int tprintf(char const *format, ...)
 	va_list args;
 	size_t i;
 
+	va_start(args, format);
 	pthread_mutex_lock(&lock);
 	printf("[%lu] ", (unsigned long)self);
 	for (i = 0; i < strlen(format); i++)
@@ -38,6 +39,7 @@ int tprintf(char const *format, ...)
 		}
 	}
 	pthread_mutex_unlock(&lock);
+	va_end(args);
 	return (0);
 }
 
