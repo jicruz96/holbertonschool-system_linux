@@ -82,8 +82,10 @@ int is_neighbor(blur_portion_t const *, int, size_t);
 void blur_image(img_t *img_blur, img_t const *img, kernel_t const *kernel);
 void portion_init(blur_portion_t *portion, img_t *img_blur, img_t const *img,
 				kernel_t const *kernel, size_t x, size_t y, size_t w, size_t h);
-size_t get_num_slices(size_t max_threads);
+size_t get_portion_grid_size(size_t max_threads);
 void *blur_portion_mt(void *portion);
+size_t split_image_into_portions(blur_portion_t **portions, img_t *img_blur,
+img_t const *img, kernel_t const *kernel);
 
 
 #endif /* MULTITHREADING_H */

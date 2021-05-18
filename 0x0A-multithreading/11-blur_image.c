@@ -1,6 +1,7 @@
 #include "multithreading.h"
 #include <pthread.h>
 #include <stdlib.h>
+#include <string.h>
 #include "10-blur_portion.c"
 
 #define max(a, b) ((a) > (b) ? (a) : (b))
@@ -18,16 +19,49 @@
  **/
 void blur_image(img_t *img_blur, img_t const *img, kernel_t const *kernel)
 {
-	size_t num_slices = get_num_slices(MAX_NUM_THREADS);
-	size_t num_threads = num_slices * num_slices;
-	blur_portion_t *portions = malloc(sizeof(blur_portion_t) * num_threads);
-	pthread_t *threads = malloc(sizeof(pthread_t) * num_threads);
+	size_t i, num_portions;
+	blur_portion_t *portions;
+	pthread_t *threads;
+
+	num_portions = split_image_into_portions(&portions, img_blur, img, kernel);
+
+	/* make threads */
+	threads = malloc(sizeof(pthread_t) * num_portions);
+	for (i = 0; i < num_portions; i++)
+		pthread_create(&threads[i], NULL, &blur_portion_mt, &portions[i]);
+
+	/* wait for threads */
+	for (i = 0; i < num_portions; i++)
+		pthread_join(threads[i], NULL);
+
+	/* clean up */
+	free(portions);
+	free(threads);
+}
+
+/**
+ * split_image_into_portions - fills in an array of image portions
+ * @portions: portions array
+ * @img_blur: pointer to blurred image to add to all portion structs
+ * @img: pointer to original image to add to all portion structs
+ * @kernel: pointer to kernel matrix to add to all portion structs
+ * Return: number of portions
+ */
+size_t split_image_into_portions(blur_portion_t **portions, img_t *img_blur,
+img_t const *img, kernel_t const *kernel)
+{
+	size_t portion_grid_size = get_portion_grid_size(MAX_NUM_THREADS);
+	size_t num_portions = portion_grid_size * portion_grid_size;
 	size_t i, x, y, w, h, remnant;
 
-	w = max(img->w / num_slices, 1);
+	*portions = malloc(sizeof(blur_portion_t) * num_portions);
+	if (*portions == NULL)
+		return (0);
+
+	w = max(img->w / portion_grid_size, 1);
 	for (i = 0, x = 0; x < img->w; x += w)
 	{
-		h = max(img->h / num_slices, 1);
+		h = max(img->h / portion_grid_size, 1);
 		remnant = img->w - (x + w);
 		if (remnant && remnant < w)
 			w += remnant;
@@ -38,26 +72,20 @@ void blur_image(img_t *img_blur, img_t const *img, kernel_t const *kernel)
 			if (remnant && remnant < h)
 				h += remnant;
 
-			portion_init(&portions[i], img_blur, img, kernel, x, y, w, h);
-			pthread_create(&threads[i], NULL, &blur_portion_mt, &portions[i]);
+			portion_init(&(*portions)[i], img_blur, img, kernel, x, y, w, h);
 			i += 1;
 		}
 	}
 
-	for (i = 0; i < num_threads; i++)
-		pthread_join(threads[i], NULL);
-
-	free(portions);
-	free(threads);
+	return (num_portions);
 }
-
 /**
- * get_num_slices - given a max thread count, returns number of image
- *					subdivisions to use for blurring algorithm
+ * get_portion_grid_size - given a max thread count, returns size of a grid of
+ *                         image portions to use for blurring algorithm
  * @max_threads: maximum amount of threads allowed
- * Return: num_slices
+ * Return: portion_grid_size
  */
-size_t get_num_slices(size_t max_threads)
+size_t get_portion_grid_size(size_t max_threads)
 {
 	size_t n = 1;
 
