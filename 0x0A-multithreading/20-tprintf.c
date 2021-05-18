@@ -16,28 +16,11 @@ int tprintf(char const *format, ...)
 {
 	pthread_t self = pthread_self();
 	va_list args;
-	size_t i;
 
 	va_start(args, format);
 	pthread_mutex_lock(&lock);
 	printf("[%lu] ", (unsigned long)self);
-	for (i = 0; i < strlen(format); i++)
-	{
-		if (format[i] == '%' && i + 1 < strlen(format))
-		{
-			i += 1;
-			if (strchr("dic", format[i]))
-				printf("%d", va_arg(args, int));
-			else if (strchr("u", format[i]))
-				printf("%u", va_arg(args, unsigned int));
-			else if (format[i] == 's')
-				printf("%s", va_arg(args, char *));
-		}
-		else
-		{
-			putchar(format[i]);
-		}
-	}
+	vprintf(format, args);
 	pthread_mutex_unlock(&lock);
 	va_end(args);
 	return (0);
