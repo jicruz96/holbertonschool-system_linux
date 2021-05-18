@@ -73,18 +73,17 @@ void blur_pixel(blur_portion_t const *portion, size_t target_i)
  */
 int is_neighbor(blur_portion_t const *portion, int neighbor_i, size_t target_i)
 {
+	int target_col, neighbor_col, kernel_size = (int)portion->kernel->size;
 	int num_pixels = portion->img->h * portion->img->w;
-	size_t kernel_size = portion->kernel->size;
-	size_t row_size = portion->img->w;
-	int target_col, neighbor_col;
+	int row_size = (int)portion->img->w;
 
 	/* return false if neighbor_i is not a valid index value */
 	if (neighbor_i < 0 || neighbor_i >= num_pixels)
 		return (0);
 
 	/* cases where target_i lies near image boundary */
-	target_col = target_i % row_size;
-	neighbor_col = neighbor_i % row_size;
+	target_col = (int)(target_i % row_size);
+	neighbor_col = (int)(neighbor_i % row_size);
 
 	if (target_col - (kernel_size / 2) < 0)
 		return (neighbor_col + (kernel_size / 2) >= row_size);
