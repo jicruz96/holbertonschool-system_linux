@@ -11,6 +11,7 @@
 #define portion_start_index(p) ((p)->y * (p)->img->w + (p)->x)
 #define MAX_NUM_THREADS 16
 
+
 /**
  * blur_image - blurs an entire image using Gaussian Blur
  * @img_blur: address where blurred image is to be stored
@@ -28,6 +29,7 @@ void blur_image(img_t *img_blur, img_t const *img, kernel_t const *kernel)
 	/* make threads */
 	threads = malloc(sizeof(pthread_t) * num_portions);
 	for (i = 0; i < num_portions; i++)
+		/* each thread will call on blur_portion(&portions[i]) */
 		pthread_create(&threads[i], NULL, &blur_portion_mt, &portions[i]);
 
 	/* wait for threads */
