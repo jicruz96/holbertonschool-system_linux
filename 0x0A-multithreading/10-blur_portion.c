@@ -19,7 +19,7 @@ void blur_portion(blur_portion_t const *portion)
 		for (col = 0; col < portion->w; col++)
 		{
 			i = row + col;
-			if (i && i % portion->img->w == 0)
+			if (col && i % portion->img->w == 0)
 				break;
 			blur_pixel(portion, i);
 		}
@@ -86,10 +86,10 @@ int is_neighbor(blur_portion_t const *portion, int neighbor_i, size_t target_i)
 	neighbor_col = (int)(neighbor_i % row_size);
 
 	if (target_col - (kernel_size / 2) < 0)
-		return (neighbor_col + (kernel_size / 2) >= row_size);
+		return (neighbor_col + (kernel_size / 2) < row_size);
 
 	if (target_col + (kernel_size / 2) >= row_size)
-		return (neighbor_col - (kernel_size / 2) < 0);
+		return (neighbor_col - (kernel_size / 2) >= 0);
 
 	return (1);
 }
