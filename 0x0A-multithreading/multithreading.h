@@ -2,6 +2,7 @@
 #define MULTITHREADING_H
 #include <stddef.h>
 #include <stdint.h>
+#include "list.h"
 
 /**
  * struct pixel_s - RGB pixel
