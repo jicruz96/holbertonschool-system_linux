@@ -77,10 +77,4 @@ list_t	*list_init(list_t *list);
 void	list_destroy(list_t *list, node_func_t free_func);
 void	list_each(list_t *list, node_func_t func);
 
-/* 21-prime_factors.c & 22-prime_factors.c */
-task_t *create_task(task_entry_t entry, void *param);
-void destroy_task(task_t *task);
-void *exec_tasks(list_t const *tasks);
-list_t *prime_factors(char const *s);
-
 #endif /* LIST_H */

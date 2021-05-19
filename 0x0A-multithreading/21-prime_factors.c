@@ -1,7 +1,5 @@
 #include "multithreading.h"
-#include "list.h"
 #include <stdlib.h>
-#include <stdio.h>
 
 /**
  * prime_factors - factors a number into a list of prime factors
