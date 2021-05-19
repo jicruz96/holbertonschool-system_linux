@@ -8,7 +8,7 @@ __attribute__((constructor)) void tasks_mutex_init(void)
 	pthread_mutex_init(&tasks_mutex, NULL);
 }
 
-__attribute__((destructor)) void end(void)
+__attribute__((destructor)) void tasks_mutex_destroy(void)
 {
 	pthread_mutex_destroy(&tasks_mutex);
 }
