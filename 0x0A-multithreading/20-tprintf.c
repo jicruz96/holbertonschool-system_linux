@@ -4,8 +4,6 @@
 #include <pthread.h>
 #include <stdarg.h>
 
-pthread_mutex_t tprintf_mutex;
-
 /**
  * tprintf - uses printf family to print out a given formatted string
  *			 uses mutex to prevent race conditions

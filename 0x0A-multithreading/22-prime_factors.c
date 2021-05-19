@@ -1,7 +1,6 @@
 #include "multithreading.h"
 #include <stdlib.h>
 
-pthread_mutex_t tasks_mutex;
 
 __attribute__((constructor)) void tasks_mutex_init(void)
 {
