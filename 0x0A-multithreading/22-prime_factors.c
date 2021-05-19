@@ -47,6 +47,7 @@ void destroy_task(task_t *task)
 	{
 		list_destroy(task->result, free);
 		free(task->result);
+		free(task);
 	}
 }
 
