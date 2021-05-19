@@ -3,6 +3,7 @@
 #include <stddef.h>
 #include <stdint.h>
 #include "list.h"
+#include <pthread.h>
 
 /**
  * struct pixel_s - RGB pixel
