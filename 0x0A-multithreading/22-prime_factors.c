@@ -84,7 +84,7 @@ void *exec_tasks(list_t const *tasks)
 				}
 			}
 
-	pthread_exit(NULL);
+	return (NULL);
 }
 
 
