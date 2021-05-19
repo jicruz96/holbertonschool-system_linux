@@ -2,7 +2,6 @@
 #define LIST_H
 
 #include <stddef.h>
-#include <pthread.h>
 
 /**
  * struct node_s - Node structure

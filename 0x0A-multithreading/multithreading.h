@@ -101,6 +101,7 @@ typedef struct task_s
     task_status_t   status;
     void        *result;
     pthread_mutex_t lock;
+	unsigned int id;
 } task_t;
 
 /* FUNCTION PROTOTYPES */
@@ -125,13 +126,15 @@ void *blur_portion_mt(void *portion);
 size_t split_image_into_portions(blur_portion_t **portions, img_t *img_blur,
 img_t const *img, kernel_t const *kernel);
 
-/* 21-prime_factors.c & 22-prime_factors.c */
+/* 21-prime_factors.c */
+list_t *prime_factors(char const *s);
+
+/* 22-prime_factors.c */
 task_t *create_task(task_entry_t entry, void *param);
 void destroy_task(task_t *task);
 void *exec_tasks(list_t const *tasks);
-list_t *prime_factors(char const *s);
-
-
-
+void *exec_task(task_t *task);
+task_status_t get_task_status(task_t *task);
+void set_task_status(task_t *task, task_status_t status);
 
 #endif /* MULTITHREADING_H */
