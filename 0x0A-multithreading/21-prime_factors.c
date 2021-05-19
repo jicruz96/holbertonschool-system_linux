@@ -13,7 +13,7 @@ list_t *prime_factors(char const *s)
 	list_t *list = malloc(sizeof(list_t));
 
 	list_init(list);
-	while (p <= n / 2)
+	while (p * p <= n)
 	{
 		while (n % p == 0)
 		{
