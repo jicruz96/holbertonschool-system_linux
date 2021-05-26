@@ -1,76 +1,122 @@
 #!/usr/bin/python3
-'''
-read_write_heap module
-'''
-if __name__ == '__main__':
-    ''' finds and replaces a string in the heap of a running process'''
-    import sys
+""" replaces a string in the heap memory of a running process
 
-    def error():
-        '''error function'''
-        print("Usage: read_write_heap.py pid search replace")
-        exit(1)
-    if len(sys.argv) != 4:
-        error()
-    pid = int(sys.argv[1])
-    search = sys.argv[2]
-    replace = sys.argv[3]
-    mapsFileName = f"/proc/{pid}/maps"
-    memFileName = f"/proc/{pid}/mem"
-    print("Found maps file!", "Found mem file!")
+    Usage: ./read_write_heap.py <pid> <target> <replacement>
+
+    where <pid> is a pid, <target> is a string to search for in the heap, and
+    <replacement> replaces target.
+"""
+
+from re import findall
+from sys import argv, stdout
+
+
+def find_target_location(buffer, target):
+    """ finds and returns buffer index where target first appears in buffer
+
+    Args:
+        * buffer (bytes): bytes buffer
+        * target (str)  : target string
+    """
+
+    for i in range(len(buffer) - len(target) + 1):
+        j = 0
+        while j < len(target) and int(buffer[i + j]) == ord(target[j]):
+            j += 1
+        if j == len(target):
+            return i
+    return None
+
+
+def read_write_heap(pid, target, replacement):
+    """ finds and replaces target string in heap of a running process
+
+    Args:
+        * pid (int)          : pid of a running process
+        * target (str)       : string to search and replace
+        * replacement (bytes): replacement string
+    """
+
+    # We'll use a regular expression to match and extract the addresses.
+    pattern_sub_strings = [
+        r'\b',             # start of line
+        r'([\da-zA-Z]+)',  # use parens to match/capture start of address range
+        r'-',              # delimiter of address range
+        r'([\da-zA-Z]+)',  # use parens to match/capture end of address range
+        r'.*?',            # rest of string leading up to '[heap]'
+        r'\[heap]'
+    ]
+    pattern = ''.join(pattern_sub_strings)
+
+    # Get address_map from /proc/PID/maps file
     try:
-        print(f"Trying to open {mapsFileName}.......")
-        with open(mapsFileName, 'r') as mapsFile:
-            print(f"{mapsFileName} open!")
-            print(f"Searching for heap in {mapsFileName}.......")
-            for line in mapsFile:
-                if '[heap]' in line:
-                    print("\t[heap] found!")
-                    split = line.split()
-                    addr = split[0]
-                    perms = split[1]
-                    offset = split[2]
-                    device = split[3]
-                    inode = split[4]
-                    path = split[-1]
-                    print(f"\taddress: {addr}")
-                    print(f"\tperms: {perms}")
-                    print(f"\toffset: {offset}")
-                    print(f"\tdevice: {device}")
-                    print(f"\tinode: {inode}")
-                    print(f"\tpath: {path}")
-                    # check for permissions
-                    if perms[0] != 'r' or perms[1] != 'w':
-                        print(f"{mapsFileName}: incorrect permissions!")
-                        mapsFile.close()
-                        exit(0)
-                    # get start and end of heap
-                    addr = addr.split('-')
-                    if len(addr) != 2:
-                        print("Incorrect address formant")
-                        mapsFile.close()
-                        exit(0)
-                    addrStart = int(addr[0], 16)
-                    addrEnd = int(addr[1], 16)
-    except IOError as e:
-        print(f"Cant open file: {mapsFileName} {e}")
-        exit(1)
-        # now that we have what we need we can open mem
+        with open('/proc/{}/maps'.format(pid), 'r') as maps_file:
+            address_map = maps_file.read()
+            maps_file.close()
+    except FileNotFoundError as e:
+        error_out('{} does not represent a running process.\n'.format(pid))
+
+    # Open mem file
+    with open('/proc/{}/mem'.format(pid), 'r+b', 0) as mem_file:
+
+        # Find all ranges of heap memory
+        # Note: re.findall() will return a list of tuples containing the
+        #       matched address ranges
+        heap_ranges = findall(pattern, address_map)
+
+        # Inspect heap ranges and replace string
+        for heap_range in heap_ranges:
+
+            # convert addresses from hex strings to decimal integers
+            start = int(heap_range[0], 16)
+            end = int(heap_range[1], 16)
+
+            # go to starting address
+            mem_file.seek(start)
+
+            # read memory segment
+            buffer = mem_file.read(end - start)
+
+            # find location of target string
+            target_location = find_target_location(buffer, target)
+
+            if target_location:  # if we found a target
+
+                # go to target string location in heap (mem file)
+                mem_file.seek(start + target_location)
+
+                # overwrite target with replacement
+                difference = max(len(target) - len(replacement), 0)
+                mem_file.write(replacement + bytes(difference))
+
+    mem_file.close()
+
+
+def error_out(error_msg):
+    """ prints error message and exits with error code 1 """
+    stdout.write(error_msg)
+    exit(1)
+
+
+if __name__ == '__main__':
+
+    # 4 arguments exactly!
+    if len(argv) != 4:
+        error_out('Usage: {} pid target_str replacement_str\n'.format(argv[0]))
+
+    # First arg must be the pid of a running process
     try:
-        print(f"Trying to open {memFileName}.......")
-        with open(memFileName, 'rb+') as memFile:
-            print(f"{memFileName} open!")
-            print("Searching for heap start.......")
-            memFile.seek(addrStart)
-            heap = memFile.read(addrEnd - addrStart)
-            try:
-                i = heap.index(bytes(search, "ASCII"))
-            except Exception:
-                print(f"Cant find {search}")
-                exit(0)
-            print(f"found {search} at {i}")
-            memFile.seek(addrStart + i)
-            print(f"replacing {search} with {replace}")
-            memFile.write(bytes(replace, "ASCII"))
-    except Exception as e:
-        print(e)
+        pid = int(argv[1])
+    except ValueError:
+        error_out('{}: first arg must be valid proccess id\n'.format(argv[0]))
+
+    # Second arg is target string
+    target = argv[2]
+
+    # Third arg is replacement string. Must be encoded into bytes first
+    replacement = bytes(argv[3], 'ascii')
+
+    # Let's do this!
+    read_write_heap(pid, target, replacement)
+    print('Complete.')
+    exit(0)
