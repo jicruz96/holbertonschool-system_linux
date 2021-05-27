@@ -31,7 +31,7 @@ def read_write_heap(pid, target, replacement):
             end = int(heap_range[1], 16)
             mem_file.seek(start)
             buffer = mem_file.read(end - start)
-            target_location = buffer.find(target))
+            target_location = buffer.find(target)
 
             if target_location != -1:
                 mem_file.seek(start + target_location)
