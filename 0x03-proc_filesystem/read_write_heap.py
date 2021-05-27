@@ -20,7 +20,7 @@ def read_write_heap(pid, target, replacement):
             maps_file.close()
     except FileNotFoundError as e:
         error_out('{} does not represent a running process.\n'.format(pid))
-  
+
     pattern = r'\b([\da-zA-Z]+)-([\da-zA-Z]+).*?\[heap]'
     # re.findall() returns a list of tuples of the captured groups
     heap_ranges = findall(pattern, address_map)
