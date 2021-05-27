@@ -1,10 +1,10 @@
 #!/usr/bin/python3
-"""read_write_heap module"""
+"""is a module"""
 import sys
 
 
 def error_function():
-    """error_function function"""
+    """does things"""
     print("Usage: read_write_heap.py pid search replace")
     exit(1)
 
