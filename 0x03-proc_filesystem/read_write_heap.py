@@ -1,7 +1,5 @@
 #!/usr/bin/python3
-'''
-read_write_heap module
-'''
+'''read_write_heap module'''
 
 
 def error_function(program):
