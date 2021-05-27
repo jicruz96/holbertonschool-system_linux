@@ -31,7 +31,7 @@ def read_write_heap(pid, target, replacement):
             end = int(heap_range[1], 16)
             mem_file.seek(start)
             buffer = mem_file.read(end - start)
-            target_location = buffer.find(bytes(target, 'ascii'))
+            target_location = buffer.find(target))
 
             if target_location != -1:
                 mem_file.seek(start + target_location)
@@ -49,20 +49,15 @@ def error_out(error_msg):
 
 if __name__ == '__main__':
 
-    # 4 arguments exactly!
     if len(argv) != 4:
         error_out('Usage: {} pid target_str replacement_str\n'.format(argv[0]))
 
-    # First arg must be the pid of a running process
     try:
         pid = int(argv[1])
     except ValueError:
         error_out('{}: first arg must be valid proccess id\n'.format(argv[0]))
 
-    # Second arg is target string
-    target = argv[2]
-
-    # Third arg is replacement string. Must be encoded into bytes first
+    target = bytes(argv[2], 'ascii')
     replacement = bytes(argv[3], 'ascii')
 
     # Let's do this!
