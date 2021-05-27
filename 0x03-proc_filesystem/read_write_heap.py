@@ -1,16 +1,33 @@
 #!/usr/bin/python3
-"""is a module"""
+""" replaces a string in the heap memory of a running process
+
+    Usage: ./read_write_heap.py <pid> <target> <replacement>
+
+    where <pid> is a pid, <target> is a string to search for in the heap, and
+    <replacement> replaces target.
+"""
 import sys
 
 
 def error_function():
-    """does things"""
+    """ finds and returns buffer index where target first appears in buffer
+
+    Args:
+        * buffer (bytes): bytes buffer
+        * target (str)  : target string
+    """
     print("Usage: read_write_heap.py pid search replace")
     exit(1)
 
 
 def foobar(pid, search, replace):
-    """stuff"""
+    """ finds and replaces target string in heap of a running process
+
+    Args:
+        * pid (int)          : pid of a running process
+        * target (str)       : string to search and replace
+        * replacement (bytes): replacement string
+    """
     mapsFileName = f"/proc/{pid}/maps"
     memFileName = f"/proc/{pid}/mem"
 
