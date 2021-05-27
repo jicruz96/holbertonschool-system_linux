@@ -11,15 +11,8 @@ def error_function():
     exit(1)
 
 
-if __name__ == '__main__':
-
-    if len(sys.argv) != 4:
-        error_function()
-
-    pid = int(sys.argv[1])
-    search = sys.argv[2]
-    replace = sys.argv[3]
-
+def foobar(pid, search, replace):
+    '''stuff'''
     mapsFileName = f"/proc/{pid}/maps"
     memFileName = f"/proc/{pid}/mem"
 
@@ -90,3 +83,14 @@ if __name__ == '__main__':
             memFile.write(bytes(replace, "ASCII"))
     except Exception as e:
         print(e)
+
+
+if __name__ == '__main__':
+
+    if len(sys.argv) != 4:
+        error_function()
+
+    pid = int(sys.argv[1])
+    search = sys.argv[2]
+    replace = sys.argv[3]
+    foobar(pid, search, replace)
