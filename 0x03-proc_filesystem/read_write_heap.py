@@ -4,10 +4,10 @@ read_write_heap module
 '''
 
 
-def error_function():
+def error_function(program):
     '''error_function function'''
-    
-    print("Usage: pid search replace")
+
+    print("Usage: {} pid search replace".format(program))
     exit(1)
 
 
@@ -17,7 +17,7 @@ if __name__ == '__main__':
     import sys
 
     if len(sys.argv) != 4:
-        error_function()
+        error_function(sys.argv[0])
 
     pid = int(sys.argv[1])
     search = sys.argv[2]
