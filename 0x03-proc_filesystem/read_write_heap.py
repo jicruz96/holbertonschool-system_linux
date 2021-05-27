@@ -21,8 +21,8 @@ if __name__ == '__main__':
     search = sys.argv[2]
     replace = sys.argv[3]
 
-    mapsFileName = f"/proc/{pid}/maps"
-    memFileName = f"/proc/{pid}/mem"
+    mapsFileName = "/proc/{}/maps".format(pid)
+    memFileName = "/proc/{}/mem".format(pid)
 
 
     try:
