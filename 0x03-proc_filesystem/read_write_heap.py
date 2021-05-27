@@ -1,16 +1,16 @@
 #!/usr/bin/python3
-'''read_write_heap module'''
+"""read_write_heap module"""
 import sys
 
 
 def error_function():
-    '''error_function function'''
+    """error_function function"""
     print("Usage: read_write_heap.py pid search replace")
     exit(1)
 
 
 def foobar(pid, search, replace):
-    '''stuff'''
+    """stuff"""
     mapsFileName = f"/proc/{pid}/maps"
     memFileName = f"/proc/{pid}/mem"
 
