@@ -2,6 +2,7 @@
 '''
 read_write_heap module
 '''
+import sys
 
 
 def error_function():
@@ -13,7 +14,6 @@ def error_function():
 if __name__ == '__main__':
     ''' finds and replaces a string in the heap of a running process'''
 
-    import sys
 
     if len(sys.argv) != 4:
         error_function()
