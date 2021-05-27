@@ -18,12 +18,16 @@ def find_target_location(buffer, target):
         * buffer (bytes): bytes buffer
         * target (str)  : target string
     """
-
+    print(buffer)
+    input()
+    print(buffer.find(bytes(target)))
+    input()
     for i in range(len(buffer) - len(target) + 1):
         j = 0
         while j < len(target) and int(buffer[i + j]) == ord(target[j]):
             j += 1
         if j == len(target):
+            input('returning {}'.format(i))
             return i
     return None
 
