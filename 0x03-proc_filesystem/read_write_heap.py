@@ -6,6 +6,7 @@ read_write_heap module
 
 def error_function():
     '''error_function function'''
+    
     print("Usage: pid search replace")
     exit(1)
 
