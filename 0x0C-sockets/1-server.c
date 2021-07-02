@@ -21,9 +21,7 @@ int main(void)
 	struct sockaddr_in addrport;
 	struct sockaddr client_addr;
 	socklen_t client_addr_size = sizeof(struct sockaddr);
-	int s;
-	unsigned int addr;
-
+	char *address;
 
 	addrport.sin_family = AF_INET;
 	addrport.sin_port = htons(PORT);
@@ -43,9 +41,14 @@ int main(void)
 	}
 
 	printf("Server listening on port %d\n", PORT);
-	s = accept(sockid, &client_addr, &client_addr_size);
-	addr = ((struct sockaddr_in *)&client_addr)->sin_addr.s_addr;
-	printf("Client connected: %u\n", addr);
+	if (accept(sockid, &client_addr, &client_addr_size) == -1)
+	{
+		perror("Accepting error:");
+		return (EXIT_FAILURE);
+	}
+
+	address = inet_ntoa(((struct sockaddr_in *)&client_addr)->sin_addr);
+	printf("Client connected: %s\n", address);
 
 	close(sockid);
 	return (0);
