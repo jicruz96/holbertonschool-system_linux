@@ -9,8 +9,6 @@
 #include <errno.h>
 
 #define PORT 12345
-#define SOCKADDR_IN_INIT {sizeof(struct sockaddr_in), AF_INET, \
-							htons(PORT), {htonl(INADDR_ANY)}, {0}}
 /**
  * main - Opens an IPv4/TCP socket and listens to traffic on port 12345.
  *        This is just a learning tool, as this server does not accept any
@@ -21,7 +19,12 @@
 int main(void)
 {
 	int sockid = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
-	struct sockaddr_in addrport = SOCKADDR_IN_INIT;
+	struct sockaddr_in addrport;
+
+
+	addrport.sin_family = AF_INET;
+	addrport.sin_port = htons(PORT);
+	addrport.sin_addr.s_addr = htonl(INADDR_ANY);
 
 	if (bind(sockid, (struct sockaddr *)&addrport, sizeof(addrport)) == -1)
 	{
