@@ -5,6 +5,8 @@
 #include <arpa/inet.h>
 #include <stdlib.h>
 
+#define PORT 12345
+
 /**
  * main - Opens an IPv4/TCP socket and listens to traffic on port 12345.
  *        This is a learning tool only. The program can accept an entering

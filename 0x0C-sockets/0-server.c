@@ -6,6 +6,8 @@
 #include <stdlib.h>
 #include <errno.h>
 
+#define PORT 12345
+
 /**
  * main - Opens an IPv4/TCP socket and listens to traffic on port 12345.
  *        This is just a learning tool, as this server does not accept any

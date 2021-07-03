@@ -4,6 +4,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#define PORT 12345
+
 /**
  * main - Opens an IPv4/TCP socket and listens to traffic on port 12345. Can
  *        accept an entering connection and waits for an incoming message.
