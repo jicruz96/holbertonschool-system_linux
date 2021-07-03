@@ -1,12 +1,9 @@
 #include "sockets.h"
 #include <unistd.h>
 #include <stdio.h>
-#include <sys/socket.h>
 #include <sys/types.h>
-#include <netinet/in.h>
 #include <arpa/inet.h>
 #include <stdlib.h>
-#include <errno.h>
 
 /**
  * main - Opens an IPv4/TCP socket and listens to traffic on port 12345.
@@ -22,6 +19,12 @@ int main(void)
 	struct sockaddr client_addr;
 	socklen_t client_addr_size = sizeof(struct sockaddr);
 	char *address;
+
+	if (sockid == -1)
+	{
+		perror("Socket:");
+		return (EXIT_FAILURE);
+	}
 
 	addrport.sin_family = AF_INET;
 	addrport.sin_port = htons(PORT);
