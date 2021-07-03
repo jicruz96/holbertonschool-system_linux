@@ -43,7 +43,7 @@ int main(void)
 	if (recv(client_id, buffer, sizeof(buffer), 0) == -1)
 		close(sockid), close(client_id), error_out("recv");
 
-	printf("Message: %s\n", buffer);
+	printf("Message received: \"%s\"\n", buffer);
 	close(client_id);
 	close(sockid);
 	return (0);
