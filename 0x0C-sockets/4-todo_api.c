@@ -38,7 +38,7 @@ int main(void)
 
 	if (listen(sockid, 1) == -1)
 		close(sockid), error_out("Listen");
-
+	setbuf(stdout, NULL);
 	printf("Server listening on port %d\n", PORT);
 	take_requests(sockid);
 	close(sockid);
