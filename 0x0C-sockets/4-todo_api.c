@@ -84,7 +84,7 @@ void take_requests(int sockid)
 		printf("Raw request: \"%s\"\n", buffer);
 		printf("Method: %s\n", strtok(buffer, " "));
 		printf("Path: %s\n", strtok(NULL, " "));
-		printf("Version: %s\n", strtok(NULL, "\n"));
+		printf("Version: %s\n", strtok(NULL, "\r\n"));
 
 		strcpy(buffer, response);
 
