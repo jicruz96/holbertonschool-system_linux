@@ -32,7 +32,7 @@ int eval_request(char *buffer, int sockid, int client_id)
 	static int id;
 
 	printf("%s %s -> ", method, path);
-	if (strcmp(method, "POST") || strncmp(path, "/todos", 6))
+	if (strcmp(method, "POST") || strcmp(path, "/todos"))
 	{
 		printf("404 Not Found\n");
 		return (404);
