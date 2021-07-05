@@ -162,7 +162,7 @@ int eval_request(char *buffer, int sockid, int client_id)
 		!title || strncmp(title, "title=", 6) ||
 		!description || strncmp(description, "description=", 12))
 	{
-		printf("422 Unprocessable Entity\n", title);
+		printf("422 Unprocessable Entity\n");
 		return (422);
 	}
 
