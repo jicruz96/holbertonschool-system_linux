@@ -87,7 +87,7 @@ void take_requests(int sockid)
 
 		printf("Raw request: \"%s\"\n", buffer);
 		print_path_and_queries(buffer);
-
+		fflush(stdout);
 		strcpy(buffer, response);
 
 		if (send(client_id, buffer, response_size, 0) == -1)
@@ -104,14 +104,16 @@ void take_requests(int sockid)
  */
 void print_path_and_queries(char *buffer)
 {
-	char *key, *value;
+	char *path, *key, *value;
 
-	printf("Path: %s\n", strtok(strtok(strchr(buffer, ' ') + 1, "/ "), "?"));
+	path = strtok(strtok(strchr(buffer, ' ') + 1, " "), "?");
+
+	printf("Path: %s\n", path);
 
 	for (
-		key = strtok(NULL, "="), value = strtok(NULL, "&");
+		key = strtok(NULL, "="), value = strtok(NULL, "&/");
 		key && value;
-		key = strtok(NULL, "="), value = strtok(NULL, "&")
+		key = strtok(NULL, "="), value = strtok(NULL, "&/")
 	)
 		printf("Query: \"%s\" -> \"%s\"\n", key, value);
 }
