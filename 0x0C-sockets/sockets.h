@@ -5,6 +5,8 @@
 
 void error_out(char *str);
 void take_requests(int sockid);
+void print_path_and_queries(char *line);
+
 
 
 #endif /* _SOCKETS_H_ */
