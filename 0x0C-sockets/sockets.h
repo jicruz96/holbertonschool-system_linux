@@ -7,6 +7,7 @@ void error_out(char *str);
 void take_requests(int sockid);
 void print_path_and_queries(char *buffer);
 void print_headers(char *buffer);
+void print_body_params(char *buffer);
 
 
 
