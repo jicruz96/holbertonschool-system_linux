@@ -5,8 +5,6 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 
-#define DICT "{\"id\": %d, \"title\": \"%s\", \"description\": \"%s\"}"
-
 /**
  * error_out - prints error and exits
  *
@@ -16,55 +14,6 @@ void error_out(char *str)
 {
 	perror(str);
 	exit(EXIT_FAILURE);
-}
-
-/**
- * take_requests - accepts new connections, responds
- * @sockid: server socket file descriptor
- *
- */
-void take_requests(int sockid)
-{
-	int status, client_id;
-	struct sockaddr client_addr;
-	socklen_t client_addr_size = sizeof(struct sockaddr);
-	char *address, buffer[1024], *response;
-	size_t response_size;
-
-	while (1)
-	{
-		client_id = accept(sockid, &client_addr, &client_addr_size);
-		if (client_id == -1)
-			close(sockid), error_out("Accept");
-
-		address = inet_ntoa(((struct sockaddr_in *)&client_addr)->sin_addr);
-		printf("%s ", address);
-
-		memset(buffer, 0, sizeof(buffer));
-
-		if (recv(client_id, buffer, sizeof(buffer), 0) == -1)
-			close(sockid), close(client_id), error_out("recv");
-		status = eval_request(buffer, sockid, client_id);
-		if (status == 422)
-			response = "HTTP/1.1 422 Unprocessable Entity\r\n\r\n";
-		else if (status == 411)
-			response = "HTTP/1.1 411 Length Required\r\n\r\n";
-		else if (status == 404)
-			response = "HTTP/1.1 404 Not Found\r\n\r\n";
-		else
-		{
-			close(client_id);
-			continue;
-		}
-		response_size = strlen(response);
-		fflush(stdout);
-		strcpy(buffer, response);
-
-		if (send(client_id, buffer, response_size, 0) == -1)
-			close(sockid), close(client_id), error_out("send");
-
-		close(client_id);
-	}
 }
 
 /**
@@ -78,7 +27,7 @@ void take_requests(int sockid)
 int eval_request(char *buffer, int sockid, int client_id)
 {
 	char *method = strtok(buffer, " "), *path = strtok(NULL, " ");
-	char **params, *header, *body, *title, *description, response[1024];
+	char **params, *header, *body, *title, *description, *response;
 	int has_length = 0;
 	static int id;
 
@@ -110,12 +59,39 @@ int eval_request(char *buffer, int sockid, int client_id)
 		printf("422 Unprocessable Entity\n");
 		return (422);
 	}
-
 	printf("201 Created\n");
-	sprintf(response, DICT, id++, title, description);
+	response = make_response(id++, title, description);
 	if (send(client_id, response, strlen(response), 0) == -1)
 		close(sockid), close(client_id), error_out("send");
+	free(params);
+	free(response);
 	return (0);
+}
+
+/**
+ * make_response - makes response
+ * @id: id
+ * @title: title
+ * @description: description
+ * Return: response string
+ */
+char *make_response(int id, char *title, char *description)
+{
+	char id_str[10], dict[512];
+	char *response;
+	size_t len;
+#define RES      "HTTP/1.1 201 Created\r\n"
+#define CON_LEN  "Content-Length: "
+#define CON_TYPE "Content-Type: application/json\r\n\r\n"
+#define DICT     "{\"id\":%d,\"title\":\"%s\",\"description\":\"%s\"}"
+	response = calloc(1024, sizeof(char));
+	if (!response)
+		return (NULL);
+	sprintf(id_str, "%d", id);
+	sprintf(dict, DICT, id, title, description);
+	len = strlen(dict);
+	sprintf(response, "%s%s%lu\r\n%s%s", RES, CON_LEN, len, CON_TYPE, dict);
+	return (response);
 }
 
 /**

@@ -55,3 +55,52 @@ int main(void)
 	close(sockid);
 	return (0);
 }
+
+/**
+ * take_requests - accepts new connections, responds
+ * @sockid: server socket file descriptor
+ *
+ */
+void take_requests(int sockid)
+{
+	int status, client_id;
+	struct sockaddr client_addr;
+	socklen_t client_addr_size = sizeof(struct sockaddr);
+	char *address, buffer[1024], *response;
+	size_t response_size;
+
+	while (1)
+	{
+		client_id = accept(sockid, &client_addr, &client_addr_size);
+		if (client_id == -1)
+			close(sockid), error_out("Accept");
+
+		address = inet_ntoa(((struct sockaddr_in *)&client_addr)->sin_addr);
+		printf("%s ", address);
+
+		memset(buffer, 0, sizeof(buffer));
+
+		if (recv(client_id, buffer, sizeof(buffer), 0) == -1)
+			close(sockid), close(client_id), error_out("recv");
+		status = eval_request(buffer, sockid, client_id);
+		if (status == 422)
+			response = "HTTP/1.1 422 Unprocessable Entity\r\n\r\n";
+		else if (status == 411)
+			response = "HTTP/1.1 411 Length Required\r\n\r\n";
+		else if (status == 404)
+			response = "HTTP/1.1 404 Not Found\r\n\r\n";
+		else
+		{
+			close(client_id);
+			continue;
+		}
+		response_size = strlen(response);
+		fflush(stdout);
+		strcpy(buffer, response);
+
+		if (send(client_id, buffer, response_size, 0) == -1)
+			close(sockid), close(client_id), error_out("send");
+
+		close(client_id);
+	}
+}

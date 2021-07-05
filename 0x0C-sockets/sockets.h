@@ -11,6 +11,8 @@ void print_body_params(char *buffer);
 int eval_request(char *buffer, int sockid, int client_id);
 char **get_params(char *body);
 char *get_param(char **params, char *key);
+char *make_response(int id, char *title, char *description);
+
 
 
 
