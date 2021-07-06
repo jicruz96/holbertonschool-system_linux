@@ -5,6 +5,9 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 
+char *make_response(int id, char *title, char *description);
+
+
 /**
  * error_out - prints error and exits
  *
