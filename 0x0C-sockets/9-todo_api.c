@@ -43,7 +43,6 @@
  *
  * Return: always zero
  */
-
 int main(void)
 {
 	int sockid = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
