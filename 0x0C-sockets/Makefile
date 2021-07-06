@@ -29,8 +29,8 @@ todo_api_3: 7-todo_api.o
 todo_api_4: 8-todo_api.o 8-helpers.o
 	$(CC) $(CFLAGS) 8-todo_api.o 8-helpers.o -o todo_api_4
 
-todo_api_5: 9-todo_api.o
-	$(CC) $(CFLAGS) 9-todo_api.o -o todo_api_5
+todo_api_5: 9-todo_api.o 9-helpers.o
+	$(CC) $(CFLAGS) 9-todo_api.o 9-helpers.o -o todo_api_5
 
 todo_api_6: 10-todo_api.o
 	$(CC) $(CFLAGS) 10-todo_api.o -o todo_api_6
