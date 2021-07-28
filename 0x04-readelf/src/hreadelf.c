@@ -109,20 +109,6 @@ static Elf_hdr_info_t *read_elf_header(int fd)
 }
 
 /**
- * free_elf_info - frees all contents of an Elf_hdr_info_t struct
- * @elf: pointer to elf info struct
- **/
-static void free_elf_info(Elf_hdr_info_t *elf)
-{
-	free(elf->os_abi_string);
-	free(elf->type_string);
-	free(elf->machine_string);
-	free(elf);
-}
-
-#include <hreadelf.h>
-
-/**
  * read_attr - reads an ELF file attribute from an ELF file
  * @fd: ELF file descriptor
  * @attr: pointer to attribute where value will be stored
@@ -148,3 +134,14 @@ int read_attr(int fd, void *attr, size_t size, uint8_t encoding)
 	return (1);
 }
 
+/**
+ * free_elf_info - frees all contents of an Elf_hdr_info_t struct
+ * @elf: pointer to elf info struct
+ **/
+static void free_elf_info(Elf_hdr_info_t *elf)
+{
+	free(elf->os_abi_string);
+	free(elf->type_string);
+	free(elf->machine_string);
+	free(elf);
+}
