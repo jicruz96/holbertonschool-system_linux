@@ -17,7 +17,13 @@
 #define HEAD_URIS    {NULL}
 #define POST_URIS    {"/todos"}
 #define PUT_URIS     {NULL}
+
+#ifdef TODO_API_7
+#define DELETE_URIS  {"/todos"}
+#else
 #define DELETE_URIS  {NULL}
+#endif
+
 #define CONNECT_URIS {NULL}
 #define OPTIONS_URIS {NULL}
 #define TRACE_URIS   {NULL}
@@ -72,7 +78,7 @@ int sum_repr_lens, int id)
 	if (tmp)
 	{
 		i = atoi(tmp);
-		if (i >= id)
+		if (i >= id || !todos[i].repr)
 			return (0);
 		*body = strdup(todos[i].repr);
 		length = todos[i].repr_len;
@@ -81,13 +87,44 @@ int sum_repr_lens, int id)
 	{
 		*body = malloc(sizeof(char) * (sum_repr_lens + 3));
 		**body = '[';
-		for (i = 0, length = 1, delim = ""; i < id; i++, delim = ",")
-			length += sprintf(*body + length, "%s%s", delim, todos[i].repr);
+		for (i = 0, length = 1, delim = ""; i < id; i++)
+			if (todos[i].repr)
+			{
+				length += sprintf(*body + length, "%s%s", delim, todos[i].repr);
+				delim = ",";
+			}
 		(*body)[length++] = ']';
 		(*body)[length] = '\0';
 	}
 
 	return (length);
+}
+
+/**
+ * process_delete_request - processes a delete request
+ * @request: pointer to struct that describes request
+ * @todos: pointer to link list of todo items
+ * @id: max id value allowed
+ * Return: "\r\n" on success and NULL on failure
+ */
+char *process_delete_request(http_request_t *request, 
+todo_t *todos, int id, int *sum_repr_lens)
+{
+	char *tmp = get_param(request->query_params, "id");
+	int i;
+
+	if (!tmp)
+		return (NULL);
+	
+	i = atoi(tmp);
+
+	if (i >= id || !todos[i].repr)
+		return (NULL);
+	
+	*sum_repr_lens -= todos[i].repr_len;
+	
+	memset(&todos[i], 0, sizeof(todo_t));
+	return (strdup("\r\n"));
 }
 
 /**
@@ -98,11 +135,15 @@ int sum_repr_lens, int id)
  */
 char *process_request(http_request_t *request)
 {
-	char *title, *description;
-	char *response, *body = NULL;
+	char *title, *description, *response, *body = NULL;
 	static todo_t todos[100];
 	static int id, sum_repr_lens;
 	size_t length;
+
+#ifdef TODO_API_7
+	if (request->method == DELETE)
+		return (process_delete_request(request, todos, id, &sum_repr_lens));
+#endif
 
 	if (request->method == GET)
 	{
@@ -165,6 +206,8 @@ char *make_response(char *client_address, char *buffer)
 			status = "404 Not Found";
 	else if (request->method == POST)
 		status = "201 Created";
+	else if (request->method == DELETE)
+		status = "204 No Content";
 	else
 		status = "200 OK";
 
