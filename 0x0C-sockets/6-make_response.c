@@ -8,15 +8,13 @@
 static void print_headers(char *buffer)
 {
 	char *headers = strchr(buffer, '\n') + 1;
-	char *header, *value;
-
-	header = strtok(headers, ":");
-	value = strtok(NULL, "\r");
+	char *header  = strtok(headers, ":");
+	char *value   = strtok(NULL, "\r");
 
 	while (header && value)
 	{
-		printf("Header: \"%s\" -> \"%s\"\n", header, ++value);
-		header = strtok(NULL, ":") + 1;
+		printf("Header: \"%s\" -> \"%s\"\n", header + (*header == '\n'), ++value);
+		header = strtok(NULL, ":");
 		value = strtok(NULL, "\r");
 	}
 
