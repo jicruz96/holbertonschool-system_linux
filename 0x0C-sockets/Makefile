@@ -29,8 +29,11 @@ todo_api_3: 7-make_response.o simple_server.o
 todo_api_4: 8-make_response.o simple_server.o
 	$(CC) $(CFLAGS) 8-make_response.o simple_server.o -o todo_api_4
 
-todo_api_5: 8-make_response.o simple_server.o
-	$(CC) $(CFLAGS) -DTODO_API_5 8-make_response.o simple_server.o -o todo_api_5
+todo_api_5: todo_api_5_files simple_server.o
+	$(CC) $(CFLAGS) 8-make_response.o simple_server.o -o todo_api_5
+
+todo_api_5_files:
+	$(CC) $(CFLAGS) -DTODO_API_5 -c 8-make_response.c
 
 todo_api_6: 10-todo_api.o 10-helpers.o
 	$(CC) $(CFLAGS) 10-todo_api.o 10-helpers.o -o todo_api_6
