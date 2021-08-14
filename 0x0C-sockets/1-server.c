@@ -32,7 +32,6 @@ int main(void)
 	addrport.sin_port = htons(PORT);
 	addrport.sin_addr.s_addr = htonl(INADDR_ANY);
 
-
 	if (bind(sockid, (struct sockaddr *)&addrport, sizeof(addrport)) == -1)
 	{
 		perror("Bind:");
