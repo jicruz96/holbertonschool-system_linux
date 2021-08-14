@@ -98,7 +98,7 @@ char *process_request(http_request_t *request)
 {
 	char *title, *description;
 	char *response, *body = NULL;
-	static todo_t todos[100] = {0};
+	static todo_t todos[100];
 	static int id, sum_repr_lens;
 	size_t length;
 
