@@ -7,14 +7,20 @@
 #include "http_request_parser.c"
 #include "todos.c"
 
-#define GET_URIS     NULL
-#define HEAD_URIS    NULL
-#define POST_URIS    post_uris
-#define PUT_URIS     NULL
-#define DELETE_URIS  NULL
-#define CONNECT_URIS NULL
-#define OPTIONS_URIS NULL
-#define TRACE_URIS   NULL
+
+#ifdef TODO_API_5
+#define GET_URIS     {"/todos"}
+#else
+#define GET_URIS     {NULL}
+#endif
+
+#define HEAD_URIS    {NULL}
+#define POST_URIS    {"/todos"}
+#define PUT_URIS     {NULL}
+#define DELETE_URIS  {NULL}
+#define CONNECT_URIS {NULL}
+#define OPTIONS_URIS {NULL}
+#define TRACE_URIS   {NULL}
 
 
 /**
@@ -25,13 +31,7 @@
  */
 int known_uri(http_request_t *request)
 {
-	char *post_uris[] = {"/todos"};
-#ifdef TODO_API_5
-#undef GET_URIS
-#define GET_URIS get_uris
-	char *get_uris[] = {"/todos"};
-#endif /* TODO_API_5 */
-	char **uris_by_method[NUM_HTTP_METHODS] = {
+	char *uris_by_method[][NUM_HTTP_METHODS] = {
 		GET_URIS,
 		HEAD_URIS,
 		POST_URIS,
@@ -42,10 +42,10 @@ int known_uri(http_request_t *request)
 		TRACE_URIS
 	};
 	char **uris = uris_by_method[request->method];
-	size_t i, size = uris ? (sizeof(uris) / sizeof(*uris)) : 0;
+	size_t i;
 
 
-	for (i = 0; i < size; i++)
+	for (i = 0; uris[i]; i++)
 		if (!strcmp(request->uri, uris[i]))
 			return (true);
 
