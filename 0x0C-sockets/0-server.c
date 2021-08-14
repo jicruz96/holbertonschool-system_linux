@@ -1,12 +1,11 @@
-#include "sockets.h"
+#include <arpa/inet.h>
 #include <unistd.h>
 #include <stdio.h>
-#include <sys/types.h>
-#include <arpa/inet.h>
-#include <stdlib.h>
-#include <errno.h>
 
-#define PORT 12345
+
+#define EXIT_SUCCESS 0
+#define EXIT_FAILURE 1
+#define PORT         12345
 
 /**
  * main - Opens an IPv4/TCP socket and listens to traffic on port 12345.
@@ -17,23 +16,23 @@
  */
 int main(void)
 {
-	int sockid = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
-	struct sockaddr_in addrport;
+	int server_id = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
+	struct sockaddr_in port;
 
 
-	addrport.sin_family = AF_INET;
-	addrport.sin_port = htons(PORT);
-	addrport.sin_addr.s_addr = htonl(INADDR_ANY);
+	port.sin_family = AF_INET;
+	port.sin_port = htons(PORT);
+	port.sin_addr.s_addr = htonl(INADDR_ANY);
 
-	if (bind(sockid, (struct sockaddr *)&addrport, sizeof(addrport)) == -1)
+	if (bind(server_id, (struct sockaddr *)&port, sizeof(port)) == -1)
 	{
-		perror("Bind:");
+		perror("Bind");
 		return (EXIT_FAILURE);
 	}
 
-	if (listen(sockid, 1) == -1)
+	if (listen(server_id, 1) == -1)
 	{
-		perror("Listen:");
+		perror("Listen");
 		return (EXIT_FAILURE);
 	}
 
@@ -42,6 +41,6 @@ int main(void)
 	while (1)
 		continue;
 
-	close(sockid);
-	return (0);
+	close(server_id);
+	return (EXIT_SUCCESS);
 }
