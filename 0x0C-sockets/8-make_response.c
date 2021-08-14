@@ -72,6 +72,8 @@ int sum_repr_lens, int id)
 	if (tmp)
 	{
 		i = atoi(tmp);
+		if (i >= id)
+			return (0);
 		*body = strdup(todos[i].repr);
 		length = todos[i].repr_len;
 	}
@@ -126,6 +128,8 @@ char *process_request(http_request_t *request)
 Content-Type: application/json\r\n\
 \r\n\
 %s" /* body goes here */
+	if (!body)
+		return (NULL);
 	response = calloc(length + sizeof(RES_STR) + 10, sizeof(char));
 	sprintf(response, RES_STR, length, body);
 	free(body);
@@ -155,7 +159,10 @@ char *make_response(char *client_address, char *buffer)
 	)
 		status = "411 Length Required";
 	else if (!(response = process_request(request)))
-		status = "422 Unprocessable Entity";
+		if (request->method == POST)
+			status = "422 Unprocessable Entity";
+		else
+			status = "404 Not Found";
 	else if (request->method == POST)
 		status = "201 Created";
 	else
