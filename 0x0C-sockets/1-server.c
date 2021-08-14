@@ -1,11 +1,10 @@
-#include "sockets.h"
+#include <arpa/inet.h>
 #include <unistd.h>
 #include <stdio.h>
-#include <sys/types.h>
-#include <arpa/inet.h>
-#include <stdlib.h>
 
-#define PORT 12345
+#define EXIT_SUCCESS 0
+#define EXIT_FAILURE 1
+#define PORT         12345
 
 /**
  * main - Opens an IPv4/TCP socket and listens to traffic on port 12345.
@@ -16,45 +15,42 @@
  */
 int main(void)
 {
-	int sockid = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
-	struct sockaddr_in addrport;
-	struct sockaddr client_addr;
-	socklen_t client_addr_size = sizeof(struct sockaddr);
-	char *address;
+	int server_id = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
+	socklen_t addr_size = sizeof(struct sockaddr);
+	struct sockaddr_in server_addr, client_addr;
 
-	if (sockid == -1)
+	if (server_id == -1)
 	{
 		perror("Socket:");
 		return (EXIT_FAILURE);
 	}
 
-	addrport.sin_family = AF_INET;
-	addrport.sin_port = htons(PORT);
-	addrport.sin_addr.s_addr = htonl(INADDR_ANY);
+	server_addr.sin_family = AF_INET;
+	server_addr.sin_port = htons(PORT);
+	server_addr.sin_addr.s_addr = htonl(INADDR_ANY);
 
-
-	if (bind(sockid, (struct sockaddr *)&addrport, sizeof(addrport)) == -1)
+	if (bind(server_id, (struct sockaddr *)&server_addr, addr_size) == -1)
 	{
 		perror("Bind:");
 		return (EXIT_FAILURE);
 	}
 
-	if (listen(sockid, 1) == -1)
+	if (listen(server_id, 1) == -1)
 	{
 		perror("Listen:");
 		return (EXIT_FAILURE);
 	}
 
 	printf("Server listening on port %d\n", PORT);
-	if (accept(sockid, &client_addr, &client_addr_size) == -1)
+
+	if (accept(server_id, (struct sockaddr *)&client_addr, &addr_size) == -1)
 	{
 		perror("Accepting error:");
 		return (EXIT_FAILURE);
 	}
 
-	address = inet_ntoa(((struct sockaddr_in *)&client_addr)->sin_addr);
-	printf("Client connected: %s\n", address);
+	printf("Client connected: %s\n", inet_ntoa(client_addr.sin_addr));
 
-	close(sockid);
+	close(server_id);
 	return (0);
 }
