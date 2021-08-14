@@ -35,7 +35,7 @@ void take_requests(int server_id)
 	int client_id;
 	struct sockaddr_in client_addr;
 	socklen_t addr_size = sizeof(struct sockaddr);
-	char request[1024], *response;
+	char request[1024] = {0}, *response;
 
 	while (1)
 	{
