@@ -36,6 +36,7 @@ todo_api_5_files:
 	$(CC) $(CFLAGS) -DTODO_API_5 -c 8-make_response.c
 
 todo_api_6: todo_api_5
+	$(CC) $(CFLAGS) 8-make_response.o simple_server.o -o todo_api_6
 
 todo_api_7: 11-todo_api.o
 	$(CC) $(CFLAGS) 11-todo_api.o -o todo_api_7
