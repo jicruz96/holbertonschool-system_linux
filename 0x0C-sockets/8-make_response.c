@@ -156,8 +156,10 @@ char *make_response(char *client_address, char *buffer)
 		status = "411 Length Required";
 	else if (!(response = process_request(request)))
 		status = "422 Unprocessable Entity";
-	else
+	else if (request->method == POST)
 		status = "201 Created";
+	else
+		status = "200 OK";
 
 	method   = request  ? request->method_str : strtok(buffer, " ");
 	uri      = request  ? request->uri    : strtok(NULL, "? ");
